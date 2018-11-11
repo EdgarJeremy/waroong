@@ -7,9 +7,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "moment": "^2.22.2",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.4",
+    "react-native-card-list": "^0.1.0",
     "react-native-elements": "^0.19.1",
+    "react-native-image-picker": "^0.27.1",
+    "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-paper": "^2.2.3",
     "react-native-parallax-header": "^1.0.6",
     "react-native-parallax-scroll-view": "^0.21.3",

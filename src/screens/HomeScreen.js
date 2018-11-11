@@ -10,7 +10,7 @@ import AccountPart from './parts/AccountPart';
 import ChatPart from './parts/ChatPart';
 
 class HomeScreen extends React.Component {
-    
+
     render() {
         return <Routes screenProps={{
             stackNavigation: this.props.navigation
@@ -29,7 +29,9 @@ const Routes = createMaterialTopTabNavigator({
         }
     },
     Store: {
-        screen: StorePart,
+        screen: ({ screenProps, navigation }) => {
+            return <StorePart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+        },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="store" size={25} color={tintColor} />,
             tabBarLabel: 'Warung Anda'

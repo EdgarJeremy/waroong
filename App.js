@@ -5,6 +5,7 @@ import { SearchBar, Badge } from 'react-native-elements';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import StoreDetailScreen from './src/screens/StoreDetailScreen';
+import AddStoreScreen from './src/screens/AddStoreScreen';
 
 const App = createStackNavigator({
 	Home: {
@@ -31,6 +32,9 @@ const App = createStackNavigator({
 	},
 	StoreDetail: {
 		screen: StoreDetailScreen
+	},
+	AddStore: {
+		screen: AddStoreScreen
 	},
 	Login: {
 		screen: LoginScreen

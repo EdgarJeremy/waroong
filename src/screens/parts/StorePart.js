@@ -18,7 +18,12 @@ const styles = {
 
 export default class StorePart extends React.Component {
 
+    _refresh() {
+        alert('refreshing');
+    }
+
     render() {
+        const { stackNavigation, tabNavigation } = this.props;
         return (
             <View>
                 <SearchBar placeholder="Cari warung..." />
@@ -29,7 +34,7 @@ export default class StorePart extends React.Component {
                             paddingLeft: 15,
                             paddingRight: 7.5
                         }]}>
-                            <TouchableNativeFeedback style={{flex: 1}} onPress={() => {}}>
+                            <TouchableNativeFeedback style={{ flex: 1 }} onPress={() => { stackNavigation.navigate('AddStore', { refresh: this._refresh.bind(this)}) }}>
                                 <Card
                                     containerStyle={{ justifyContent: 'center', alignItems: 'center', flex: 1, margin: 0 }}>
                                     <Icon name="plus-circle-outline" size={100} />

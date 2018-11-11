@@ -6,7 +6,7 @@ import {
     StyleSheet,
     Text,
     View,
-    RefreshControl,
+    TouchableOpacity
 } from 'react-native';
 
 const HEADER_MAX_HEIGHT = 300;
@@ -26,7 +26,6 @@ export default class ParallaxPage extends Component {
     }
 
     _renderScrollViewContent() {
-        const data = Array.from({ length: 30 });
         return (
             <View style={styles.scrollViewContent}>
                 {this.props.renderContent ? this.props.renderContent() : null}
@@ -55,6 +54,11 @@ export default class ParallaxPage extends Component {
             outputRange: [0, 100],
             extrapolate: 'clamp',
         });
+        const detailOpacity = scrollY.interpolate({
+            inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
+            outputRange: [1, 1, 0],
+            extrapolate: 'clamp',
+        });
 
         const titleScale = scrollY.interpolate({
             inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
@@ -77,17 +81,29 @@ export default class ParallaxPage extends Component {
                 <Animated.ScrollView
                     style={styles.fill}
                     scrollEventThrottle={1}
-                    onScroll={Animated.event(
-                        [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-                        { useNativeDriver: true },
-                    )}
+                    onScroll={(e) => {
+                        if (e.nativeEvent.contentOffset.y >= 250) {
+                            if (this.props.onHeaderSnap) {
+                                this.props.onHeaderSnap();
+                            }
+                        } else {
+                            if (this.props.onHeaderExtend) {
+                                this.props.onHeaderExtend();
+                            }
+                        }
+                        return (
+                            Animated.event(
+                                [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+                                // { useNativeDriver: true },
+                            )(e)
+                        );
+                    }}
                     contentInset={{
                         top: HEADER_MAX_HEIGHT,
                     }}
                     contentOffset={{
                         y: -HEADER_MAX_HEIGHT,
-                    }}
-                >
+                    }}>
                     {this._renderScrollViewContent()}
                 </Animated.ScrollView>
                 <Animated.View
@@ -107,6 +123,10 @@ export default class ParallaxPage extends Component {
                         ]}
                         source={this.props.headerImage}
                     />
+                    <Animated.View
+                        style={[{ opacity: detailOpacity, position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }, this.props.foregroundContainerStyle]}>
+                            {this.props.renderForeground ? this.props.renderForeground() : null}
+                    </Animated.View>
                 </Animated.View>
                 <Animated.View
                     style={[
