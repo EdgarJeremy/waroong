@@ -15,8 +15,8 @@ const styles = {
     title: { fontWeight: 'bold' },
     rightTitle: { fontWeight: 'normal' },
     subtitleContainer: { marginLeft: 10 },
-    summary: { fontSize: 13, color: '#bdc3c7' },
-    time: { fontSize: 13 }
+    summary: { fontSize: 13, color: '#bdc3c7', fontWeight: 'normal' },
+    time: { fontSize: 13, color: '#bdc3c7', fontWeight: 'normal' }
 }
 
 export default class ChatPart extends React.Component {

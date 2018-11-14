@@ -8,7 +8,17 @@ import StoreDetailScreen from './src/screens/StoreDetailScreen';
 import AddStoreScreen from './src/screens/AddStoreScreen';
 import PrivateChatScreen from './src/screens/PrivateChatScreen';
 
-const App = createStackNavigator({
+class App extends React.Component {
+
+	render() {
+		return (
+			<Routes />
+		)
+	}
+
+}
+
+const Routes = createStackNavigator({
 	Home: {
 		screen: HomeScreen,
 		navigationOptions: ({ navigation }) => ({
@@ -25,18 +35,7 @@ const App = createStackNavigator({
 				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<TouchableOpacity>
 						<View style={{ marginRight: 10 }}>
-							<Icon name="chat" size={30} />
-							<View style={{ borderRadius: 100, justifyContent: 'center', alignItems: 'center', width: 15, height: 15, position: 'absolute', top: -4, right: -4, backgroundColor: '#e74c3c' }}>
-								<Text style={{ fontSize: 10, color: '#ffffff', fontWeight: 'bold' }}>5</Text>
-							</View>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity>
-						<View style={{ marginRight: 10 }}>
 							<Icon name="notifications" size={30} />
-							<View style={{ borderRadius: 100, justifyContent: 'center', alignItems: 'center', width: 15, height: 15, position: 'absolute', top: -4, right: -4, backgroundColor: '#e74c3c' }}>
-								<Text style={{ fontSize: 10, color: '#ffffff', fontWeight: 'bold' }}>1</Text>
-							</View>
 						</View>
 					</TouchableOpacity>
 				</View>

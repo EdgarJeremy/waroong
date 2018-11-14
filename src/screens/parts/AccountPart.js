@@ -17,7 +17,7 @@ export default class AccountPart extends React.Component {
         return (
             <View style={styles.container}>
                 <ScrollView>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', elevation: 1, backgroundColor: '#f1f2f6' }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', elevation: 1, backgroundColor: '#f1f2f6', paddingBottom: 15 }}>
                         <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 10 }}>Lorem Ipsum</Text>
                         <Image resizeMode="cover" source={{ uri: 'https://scontent.fsub1-1.fna.fbcdn.net/v/t1.0-9/44533063_562686290826884_7598173544672919552_n.jpg?_nc_cat=105&_nc_ht=scontent.fsub1-1.fna&oh=52e956b8294f026554c9df33ac941d0e&oe=5C69E88B' }}
                             style={{ marginBottom: 10, borderWidth: 0, borderColor: '#ff4757', width: 130, height: 130, borderRadius: 100 }}

@@ -3,6 +3,7 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FloatingCounter from '../components/FloatingCounter';
 import HomePart from './parts/HomePart';
 import StorePart from './parts/StorePart';
 import AccountPart from './parts/AccountPart';
@@ -45,7 +46,12 @@ const Routes = createMaterialTopTabNavigator({
             return <ChatPart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
         navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <Icon name="chat" size={25} color={tintColor} />,
+            tabBarIcon: ({ tintColor }) => (
+                <View>
+                    <Icon name="chat" size={25} color={tintColor} />
+                    <FloatingCounter text={4} />
+                </View>
+            ),
             tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>OBROLAN</Text>
         }
     },
