@@ -8,7 +8,8 @@ const styles = {
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        backgroundColor: '#ced6e0',
+        // backgroundColor: '#ced6e0',
+        backgroundColor: '#ffffff',
         paddingBottom: 100
     },
     items: {
@@ -19,14 +20,14 @@ const styles = {
 export default class StorePart extends React.Component {
 
     _refresh() {
-        alert('refreshing');
+        // todo : refreshing list
     }
 
     render() {
         const { stackNavigation, tabNavigation } = this.props;
         return (
             <View>
-                <SearchBar placeholder="Cari warung..." />
+            <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
                 <ScrollView>
                     <View style={styles.container}>
                         <View style={[styles.items, {
@@ -34,7 +35,7 @@ export default class StorePart extends React.Component {
                             paddingLeft: 15,
                             paddingRight: 7.5
                         }]}>
-                            <TouchableNativeFeedback style={{ flex: 1 }} onPress={() => { stackNavigation.navigate('AddStore', { refresh: this._refresh.bind(this)}) }}>
+                            <TouchableNativeFeedback style={{ flex: 1 }} onPress={() => { stackNavigation.navigate('AddStore', { refresh: this._refresh.bind(this) }) }}>
                                 <Card
                                     containerStyle={{ justifyContent: 'center', alignItems: 'center', flex: 1, margin: 0 }}>
                                     <Icon name="plus-circle-outline" size={100} />

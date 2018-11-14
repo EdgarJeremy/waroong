@@ -6,7 +6,8 @@ import call from 'react-native-phone-call';
 
 const styles = {
     container: {
-        backgroundColor: '#ced6e0',
+        // backgroundColor: '#ced6e0',
+        backgroundColor: '#ffffff',
         paddingBottom: 100
     },
     description: {
@@ -33,7 +34,7 @@ export default class HomePart extends React.Component {
         const { stackNavigation, tabNavigation } = this.props;
         return (
             <View>
-                <SearchBar placeholder="Cari..." />
+                <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
                 <ScrollView>
                     <View style={styles.container}>
                         {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((u, i) => (

@@ -58,7 +58,10 @@ export default class AddStoreScreen extends React.Component {
     }
 
     _done() {
-        console.log(this.props);
+        const { navigation } = this.props;
+        const { params: previousPage } = navigation.state;
+        navigation.goBack();
+        previousPage.refresh();
     }
 
     render() {

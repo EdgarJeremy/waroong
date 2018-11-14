@@ -1,11 +1,10 @@
 import React from 'react';
 // import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import { createMaterialTopTabNavigator } from 'react-navigation';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import HomePart from './parts/HomePart';
 import StorePart from './parts/StorePart';
-import SettingPart from './parts/SettingPart';
 import AccountPart from './parts/AccountPart';
 import ChatPart from './parts/ChatPart';
 
@@ -18,6 +17,10 @@ class HomeScreen extends React.Component {
     }
 }
 
+const styles = {
+    labelStyle: { fontSize: 8, fontWeight: 'bold', paddingTop: 4, paddingBottom: 4 }
+}
+
 const Routes = createMaterialTopTabNavigator({
     Home: {
         screen: ({ screenProps, navigation }) => {
@@ -25,7 +28,7 @@ const Routes = createMaterialTopTabNavigator({
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="home" size={25} color={tintColor} />,
-            tabBarLabel: 'Explorasi'
+            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>EXPLORASI</Text>
         }
     },
     Store: {
@@ -34,39 +37,29 @@ const Routes = createMaterialTopTabNavigator({
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="store" size={25} color={tintColor} />,
-            tabBarLabel: 'Warung Anda'
+            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>WARUNG ANDA</Text>
         }
     },
     Chat: {
-        screen: ChatPart,
+        screen: ({ screenProps, navigation }) => {
+            return <ChatPart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+        },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="chat" size={25} color={tintColor} />,
-            tabBarLabel: 'Obrolan'
-        }
-    },
-    Setting: {
-        screen: SettingPart,
-        navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <Icon name="settings" size={25} color={tintColor} />,
-            tabBarLabel: 'Pengaturan'
+            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>OBROLAN</Text>
         }
     },
     Account: {
         screen: AccountPart,
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="account-circle" size={25} color={tintColor} />,
-            tabBarLabel: 'Akun'
+            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>AKUN</Text>
         }
     }
 }, {
         tabBarOptions: {
             style: {
                 backgroundColor: '#f1f2f6'
-            },
-            labelStyle: {
-                fontSize: 8,
-                color: '#333333',
-                fontWeight: 'bold'
             },
             pressColor: '#ff4757',
             indicatorStyle: {
