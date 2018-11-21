@@ -56,7 +56,9 @@ const Routes = createMaterialTopTabNavigator({
         }
     },
     Account: {
-        screen: AccountPart,
+        screen: ({ screenProps, navigation }) => {
+            return <AccountPart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+        },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="account-circle" size={25} color={tintColor} />,
             tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>AKUN</Text>

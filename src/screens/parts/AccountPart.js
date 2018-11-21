@@ -13,7 +13,13 @@ const styles = {
 
 export default class AccountPart extends React.Component {
 
+    _onLogout() {
+        const { stackNavigation } = this.props;
+        stackNavigation.replace('Login');
+    }
+
     render() {
+        const { stackNavigation, tabNavigation } = this.props;
         return (
             <View style={styles.container}>
                 <ScrollView>
@@ -26,11 +32,11 @@ export default class AccountPart extends React.Component {
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderTopColor: '#95a5a6', borderTopWidth: 0.3, borderBottomColor: '#95a5a6', borderBottomWidth: 0.3, padding: 10 }}>
                         <InfoBadge text="Warung - 16" icon="store" tintColor="#2ecc71" />
-                        <InfoBadge text="Obrolan - 30" icon="chat" tintColor="#3498db" />
+                        <InfoBadge text="Jangaukan - 30" icon="map" tintColor="#3498db" />
                         <InfoBadge text="Rating - 4/5" icon="star" tintColor="#f1c40f" />
                     </View>
                     <View>
-                        <TouchableNativeFeedback>
+                        <TouchableNativeFeedback onPress={() => stackNavigation.navigate('EditAccount')}>
                             <ListItem
                                 leftIcon={{ name: 'account-box' }}
                                 title="Edit Profil"
@@ -60,7 +66,7 @@ export default class AccountPart extends React.Component {
                                 title="Hubungi Developer"
                             />
                         </TouchableNativeFeedback>
-                        <TouchableNativeFeedback>
+                        <TouchableNativeFeedback onPress={this._onLogout.bind(this)}>
                             <ListItem
                                 leftIcon={{ name: 'logout', color: '#e74c3c', type: 'material-community' }}
                                 title="Keluar"

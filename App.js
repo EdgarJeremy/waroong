@@ -7,6 +7,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import StoreDetailScreen from './src/screens/StoreDetailScreen';
 import AddStoreScreen from './src/screens/AddStoreScreen';
 import PrivateChatScreen from './src/screens/PrivateChatScreen';
+import EditAccountScreen from './src/screens/EditAccountScreen';
 
 class App extends React.Component {
 
@@ -19,18 +20,13 @@ class App extends React.Component {
 }
 
 const Routes = createStackNavigator({
+	Login: {
+		screen: LoginScreen
+	},
 	Home: {
 		screen: HomeScreen,
 		navigationOptions: ({ navigation }) => ({
 			title: "WAROONG",
-			// headerLeft: (
-			// 	<View></View>
-			// ),
-			// headerTitle: (
-			// 	<View style={{ flex: 1, alignItems: 'center' }}>
-			// 		<Text style={{ fontWeight: 'bold', fontSize: 20 }}>WAROONG</Text>
-			// 	</View>
-			// ),
 			headerRight: (
 				<View style={{ flex: 1, flexDirection: 'row' }}>
 					<TouchableOpacity>
@@ -51,8 +47,8 @@ const Routes = createStackNavigator({
 	PrivateChat: {
 		screen: PrivateChatScreen
 	},
-	Login: {
-		screen: LoginScreen
+	EditAccount: {
+		screen: EditAccountScreen
 	}
 }, {
 		navigationOptions: {

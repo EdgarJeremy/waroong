@@ -1,18 +1,23 @@
 import React from 'react';
-import { Text, Image, View, ScrollView } from 'react-native';
-import { FormLabel, FormInput, Card, Button, Divider } from 'react-native-elements';
+import { Text, Image, View, ScrollView, TouchableOpacity, TouchableNativeFeedback, Alert, StyleSheet } from 'react-native';
+import { FormLabel, FormInput, Card, Button, Divider, Icon } from 'react-native-elements';
+import Snackbar from 'react-native-snackbar';
+import session from '../modules/session';
+import handler from '../modules/handler';
 
-const styles = {
+const styles = StyleSheet.create({
     root: {
         flex: 1,
-        backgroundColor: '#ff4757'
+        backgroundColor: '#ffffff'
     },
     heroContainer: {
-        flex: 1, flexDirection: "row", alignItems: 'center',
-        padding: 60
+        flexDirection: "row", alignItems: 'center',
+        height: 300, padding: 60,
+        backgroundColor: '#f1f2f6'
     },
     hero: {
         flex: 1, resizeMode: 'contain',
+        width: 200, height: 200
     },
     divider: {
         marginTop: 10,
@@ -22,8 +27,11 @@ const styles = {
         alignSelf: 'center',
         marginTop: 10,
         textDecorationLine: 'underline'
-    }
-}
+    },
+    headerControlContainer: { flexDirection: 'row', borderBottomColor: '#eaeaea', borderBottomWidth: 1 },
+    controlContainer: { padding: 20, alignItems: 'center' },
+    controlText: { fontWeight: 'bold' }
+});
 
 export default class LoginScreen extends React.Component {
 
@@ -34,15 +42,21 @@ export default class LoginScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: false,
             action: 'login',
             loginData: {
                 email: '',
                 password: ''
             },
             registerData: {
-                fullname: '',
+                name: '',
                 email: '',
+                phone: '',
                 password: ''
+            },
+            verifyData: {
+                email: '',
+                code: ''
             }
         }
     }
@@ -58,49 +72,135 @@ export default class LoginScreen extends React.Component {
     }
 
     _onLogin() {
-        this.props.navigation.replace('Home');
+        const { loginData } = this.state;
+        const { navigation } = this.props;
+        this.setState({ loading: true }, () => {
+            session.start(loginData).then((user) => {
+                this.setState({ loading: false }, () => {
+                    if (user) {
+                        navigation.navigate('HomeScreen');
+                    } else {
+                        Snackbar.show({
+                            title: 'Login tidak valid. Periksa data login anda',
+                            duration: Snackbar.LENGTH_LONG
+                        });
+                    }
+                });
+            }).catch((err) => {
+                this.setState({ loading: false }, () => {
+                    handler.invalidRequestMessage(err);
+                });
+            });
+        });
     }
 
     _onRegister() {
+        const { registerData } = this.state;
+        this.setState({ loading: true }, () => {
+            session.register(registerData).then((data) => {
+                this.setState({ loading: false }, () => {
+                    if (data.status) {
+                        this.setState({
+                            verifyData: {
+                                email: registerData.email,
+                                code: ''
+                            }
+                        }, () => this._switch('verify'));
+                    } else {
+                        Snackbar.show({
+                            title: data.message,
+                            duration: Snackbar.LENGTH_LONG,
+                            // action: { title: 'Detail', onPress: () => Alert.alert('Detail Error', data.message), color: 'green' }
+                        });
+                    }
+                });
+            }).catch((err) => {
+                this.setState({ loading: false }, () => {
+                    handler.invalidRequestMessage(err);
+                });
+            });
+        });
+    }
+
+    _onVerify() {
 
     }
 
     render() {
-        const { action, loginData, registerData } = this.state;
+        const { action, loginData, registerData, verifyData, loading } = this.state;
         return (
             <View style={styles.root}>
                 <View style={styles.heroContainer}>
                     <Image style={styles.hero} source={require('../images/logo.png')} />
                 </View>
-                <ScrollView>
-                    <View style={{ flex: 4 }}>
-                        {action === 'login' ?
-                            (
-                                <Card>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormInput value={loginData.email} onChangeText={(value) => this._dataChange('loginData', 'email', value)} placeholder="Email anda" textContentType="emailAddress" />
-                                    <FormLabel>Password</FormLabel>
-                                    <FormInput value={loginData.password} onChangeText={(value) => this._dataChange('loginData', 'password', value)} secureTextEntry={true} placeholder="Password anda" />
-                                    <Divider style={styles.divider} />
-                                    <Button onPress={this._onLogin.bind(this)} title="MASUK" backgroundColor="#ff4757" icon={{ name: 'done' }} />
-                                    <Text onPress={() => this._switch('register')} style={styles.bottomLink}>Belum punya akun?</Text>
-                                </Card>
-                            ) :
-                            (
-                                <Card>
-                                    <FormLabel>Nama Lengkap</FormLabel>
-                                    <FormInput value={registerData.fullname} onChangeText={(value) => this._dataChange('registerData', 'fullname', value)} placeholder="Nama Lengkap anda" />
-                                    <FormLabel>Email</FormLabel>
-                                    <FormInput value={registerData.email} onChangeText={(value) => this._dataChange('registerData', 'email', value)} placeholder="Email anda" textContentType="emailAddress" />
-                                    <FormLabel>Password</FormLabel>
-                                    <FormInput value={registerData.password} secureTextEntry={true} onChangeText={(value) => this._dataChange('registerData', 'password', value)} placeholder="Password anda" />
-                                    <Divider style={styles.divider} />
-                                    <Button title="DAFTAR" backgroundColor="#3498db" icon={{ name: 'done' }} />
-                                    <Text onPress={() => this._switch('login')} style={styles.bottomLink}>Sudah punya akun?</Text>
-                                </Card>
-                            )}
+                <View style={{ flex: 5 }}>
+                    <View style={{ flex: 1 }}>
+                        <View style={styles.headerControlContainer}>
+                            <View style={{ flex: 1, backgroundColor: action === 'login' ? '#ffffff' : '#f5f5f5' }}>
+                                <TouchableNativeFeedback style={{ flex: 1 }} background={TouchableNativeFeedback.Ripple('#ffffff')} onPress={() => this._switch('login')}>
+                                    <View style={styles.controlContainer}>
+                                        <Icon name="login-variant" type="material-community" /><Text style={styles.controlText}>MASUK</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                            <View style={{ flex: 1, backgroundColor: action === 'register' ? '#ffffff' : '#f5f5f5' }}>
+                                <TouchableNativeFeedback style={{ flex: 1 }} background={TouchableNativeFeedback.Ripple('#ffffff')} onPress={() => this._switch('register')}>
+                                    <View style={styles.controlContainer}>
+                                        <Icon name="account-details" type="material-community" /><Text style={styles.controlText}>DAFTAR</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                            <View style={{ flex: 1, backgroundColor: action === 'verify' ? '#ffffff' : '#f5f5f5' }}>
+                                <TouchableNativeFeedback style={{ flex: 1 }} background={TouchableNativeFeedback.Ripple('#ffffff')} onPress={() => this._switch('verify')}>
+                                    <View style={styles.controlContainer}>
+                                        <Icon name="account-check" type="material-community" /><Text style={styles.controlText}>VERIFIKASI</Text>
+                                    </View>
+                                </TouchableNativeFeedback>
+                            </View>
+                        </View>
+                        <ScrollView>
+                            <View style={{ padding: 10 }}>
+                                {action === 'login' ?
+                                    (
+                                        <View>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormInput value={loginData.email} onChangeText={(value) => this._dataChange('loginData', 'email', value)} placeholder="Email anda" textContentType="emailAddress" />
+                                            <FormLabel>Password</FormLabel>
+                                            <FormInput value={loginData.password} onChangeText={(value) => this._dataChange('loginData', 'password', value)} secureTextEntry={true} placeholder="Password anda" />
+                                            <Divider style={styles.divider} />
+                                            <Button raised disabled={loading} loading={loading} onPress={this._onLogin.bind(this)} title={!loading ? 'MASUK' : ''} backgroundColor="#ff4757" large />
+                                        </View>
+                                    ) :
+                                    (
+                                        (action === 'register') ? (
+                                            <View>
+                                                <FormLabel>Nama Lengkap</FormLabel>
+                                                <FormInput value={registerData.name} onChangeText={(value) => this._dataChange('registerData', 'name', value)} placeholder="Nama Lengkap anda" />
+                                                <FormLabel>Email</FormLabel>
+                                                <FormInput value={registerData.email} onChangeText={(value) => this._dataChange('registerData', 'email', value)} placeholder="Email anda" textContentType="emailAddress" keyboardType="email-address" />
+                                                <FormLabel>Nomor Telefon</FormLabel>
+                                                <FormInput value={registerData.phone} onChangeText={(value) => this._dataChange('registerData', 'phone', value)} placeholder="Nomor telefon anda" textContentType="telephoneNumber" keyboardType="phone-pad" />
+                                                <FormLabel>Password</FormLabel>
+                                                <FormInput value={registerData.password} secureTextEntry={true} onChangeText={(value) => this._dataChange('registerData', 'password', value)} placeholder="Password anda" textContentType="password" />
+                                                <Divider style={styles.divider} />
+                                                <Button raised disabled={loading} loading={loading} title={!loading ? 'DAFTAR' : ''} backgroundColor="#3498db" onPress={this._onRegister.bind(this)} large />
+                                            </View>
+                                        ) : (
+                                                <View>
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormInput value={verifyData.email} onChangeText={(value) => this._dataChange('verifyData', 'email', value)} placeholder="Email anda" textContentType="emailAddress" keyboardType="email-address" />
+                                                    <FormLabel>Kode Verifikasi</FormLabel>
+                                                    <FormInput value={verifyData.name} onChangeText={(value) => this._dataChange('verifyData', 'code', value)} placeholder="Kode verifikasi (lihat inbox email)" />
+                                                    <Divider style={styles.divider} />
+                                                    <Button raised disabled={loading} loading={loading} title={!loading ? 'VERIFIKASI' : ''} backgroundColor="#2ecc71" onPress={this._onVerify.bind(this)} large />
+                                                </View>
+                                            )
+                                    )
+                                }
+                            </View>
+                        </ScrollView>
                     </View>
-                </ScrollView>
+                </View>
             </View>
         )
     }

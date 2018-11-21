@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
+import { View, Text, ScrollView, ProgressBarAndroid, TouchableNativeFeedback } from 'react-native';
 import { Card, Divider, Button, SearchBar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -27,7 +27,10 @@ export default class StorePart extends React.Component {
         const { stackNavigation, tabNavigation } = this.props;
         return (
             <View>
-            <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
+                <View>
+                    <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
+                    <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />
+                </View>
                 <ScrollView>
                     <View style={styles.container}>
                         <View style={[styles.items, {
