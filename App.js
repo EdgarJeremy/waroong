@@ -20,9 +20,6 @@ class App extends React.Component {
 }
 
 const Routes = createStackNavigator({
-	Login: {
-		screen: LoginScreen
-	},
 	Home: {
 		screen: HomeScreen,
 		navigationOptions: ({ navigation }) => ({
@@ -49,7 +46,10 @@ const Routes = createStackNavigator({
 	},
 	EditAccount: {
 		screen: EditAccountScreen
-	}
+	},
+	Login: {
+		screen: LoginScreen
+	},
 }, {
 		navigationOptions: {
 			headerStyle: {

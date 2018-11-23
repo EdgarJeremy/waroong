@@ -9,7 +9,7 @@ export default {
                 if (body.status) {
                     await AsyncStorage.setItem('accessToken', body.data.token);
                     await AsyncStorage.setItem('refreshToken', body.data.refreshToken);
-                    return new UserModel(req, '/users', body.data.user);
+                    return new UserModel(body.data.user);
                 } else return null;
             }
         });
@@ -18,7 +18,7 @@ export default {
         return req('/public/check', 'GET').then(async (body) => {
             if (body) {
                 if (body.status) {
-                    return new UserModel(req, '/users', body.data);
+                    return new UserModel(body.data);
                 } else return null;
             }
         });
@@ -34,5 +34,12 @@ export default {
     },
     register: (payload) => {
         return req('/public/register', 'POST', { body: payload });
+    },
+    verify: (payload) => {
+        return req('/public/verify', 'POST', { body: payload }).then((body) => {
+            if(body.status) {
+                return new UserModel(body.data);
+            } else return null;
+        });
     }
 }

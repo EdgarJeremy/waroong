@@ -3,10 +3,10 @@ import { View, ScrollView, Text, ProgressBarAndroid } from 'react-native';
 import { Card, Divider, Button, SearchBar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import call from 'react-native-phone-call';
+import { Store } from '../../models';
 
 const styles = {
     container: {
-        // backgroundColor: '#ced6e0',
         backgroundColor: '#ffffff',
         paddingBottom: 100
     },
@@ -30,13 +30,27 @@ const styles = {
 
 export default class HomePart extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: true
+        };
+    }
+
+    componentDidMount() {
+        Store.collection().then((stores) => {
+            console.log(stores);
+        });
+    }
+
     render() {
         const { stackNavigation, tabNavigation } = this.props;
+        const { loading } = this.state;
         return (
             <View>
                 <View>
                     <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
-                    <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />
+                    {loading && <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />}
                 </View>
                 <ScrollView>
                     <View style={styles.container}>
