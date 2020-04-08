@@ -11,8 +11,13 @@ import ChatPart from './parts/ChatPart';
 
 class HomeScreen extends React.Component {
 
+    static navigationOptions = {
+        headerLeft: null
+    }
+
     render() {
         return <Routes screenProps={{
+            ...this.props.screenProps,
             stackNavigation: this.props.navigation
         }} />
     }
@@ -25,7 +30,7 @@ const styles = {
 const Routes = createMaterialTopTabNavigator({
     Home: {
         screen: ({ screenProps, navigation }) => {
-            return <HomePart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+            return <HomePart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="home" size={25} color={tintColor} />,
@@ -34,7 +39,7 @@ const Routes = createMaterialTopTabNavigator({
     },
     Store: {
         screen: ({ screenProps, navigation }) => {
-            return <StorePart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+            return <StorePart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="store" size={25} color={tintColor} />,
@@ -43,7 +48,7 @@ const Routes = createMaterialTopTabNavigator({
     },
     Chat: {
         screen: ({ screenProps, navigation }) => {
-            return <ChatPart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+            return <ChatPart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => (
@@ -57,7 +62,7 @@ const Routes = createMaterialTopTabNavigator({
     },
     Account: {
         screen: ({ screenProps, navigation }) => {
-            return <AccountPart stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+            return <AccountPart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="account-circle" size={25} color={tintColor} />,
@@ -65,20 +70,20 @@ const Routes = createMaterialTopTabNavigator({
         }
     }
 }, {
-        tabBarOptions: {
-            style: {
-                backgroundColor: '#f1f2f6'
-            },
-            pressColor: '#ff4757',
-            indicatorStyle: {
-                height: 3,
-                backgroundColor: '#ff4757'
-            },
-            showIcon: true,
-            activeTintColor: '#ff4757',
-            inactiveTintColor: '#333333'
+    tabBarOptions: {
+        style: {
+            backgroundColor: '#f1f2f6'
         },
-        tabBarPosition: 'bottom'
-    });
+        pressColor: '#ff4757',
+        indicatorStyle: {
+            height: 3,
+            backgroundColor: '#ff4757'
+        },
+        showIcon: true,
+        activeTintColor: '#ff4757',
+        inactiveTintColor: '#333333'
+    },
+    tabBarPosition: 'bottom'
+});
 
 export default HomeScreen;

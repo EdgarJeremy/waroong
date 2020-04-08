@@ -74,21 +74,15 @@ export default class LoginScreen extends React.Component {
 
     _onLogin() {
         const { loginData } = this.state;
-        const { navigation } = this.props;
+        const { authProvider } = this.props;
         this.setState({ loading: true }, () => {
-            session.start(loginData).then((user) => {
+            authProvider.set(loginData).then((user) => {
                 this.setState({ loading: false }, () => {
-                    if (user) {
-                        console.log(user);
-                        navigation.navigate('Home');
-                    } else {
-                        Snackbar.show({
-                            title: 'Login tidak valid. Periksa data login anda',
-                            duration: Snackbar.LENGTH_LONG
-                        });
-                    }
+                    // navigation.navigate('Home');
+                    this.props.onLogin(user);
                 });
             }).catch((err) => {
+                console.log(err);
                 this.setState({ loading: false }, () => {
                     handler.invalidRequestMessage(err);
                 });
@@ -101,26 +95,19 @@ export default class LoginScreen extends React.Component {
         this.setState({ loading: true }, () => {
             session.register(registerData).then((data) => {
                 this.setState({ loading: false }, () => {
-                    if (data.status) {
-                        Snackbar.show({
-                            title: 'Registrasi berhasil! Silakan cek inbox email anda dan lakukan verifikasi',
-                            duration: Snackbar.LENGTH_SHORT
-                        });
-                        this.setState({
-                            verifyData: {
-                                email: registerData.email,
-                                code: ''
-                            }
-                        }, () => this._switch('verify'));
-                    } else {
-                        Snackbar.show({
-                            title: data.message,
-                            duration: Snackbar.LENGTH_LONG,
-                            // action: { title: 'Detail', onPress: () => Alert.alert('Detail Error', data.message), color: 'green' }
-                        });
-                    }
+                    Snackbar.show({
+                        title: 'Registrasi berhasil! Silakan cek inbox email anda dan lakukan verifikasi',
+                        duration: Snackbar.LENGTH_SHORT
+                    });
+                    this.setState({
+                        verifyData: {
+                            email: registerData.email,
+                            code: ''
+                        }
+                    }, () => this._switch('verify'));
                 });
             }).catch((err) => {
+                console.log(err);
                 this.setState({ loading: false }, () => {
                     handler.invalidRequestMessage(err);
                 });

@@ -33,18 +33,19 @@ export default class HomePart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true
+            loading: true,
+            stores: null
         };
     }
 
-    componentDidMount() {
-        Store.collection().then((stores) => {
-            console.log(stores);
-        });
+    async componentDidMount() {
+        const { models } = this.props;
+        const stores = await models.Store.collection();
+        this.setState({ stores });
     }
 
     render() {
-        const { stackNavigation, tabNavigation } = this.props;
+        const { stackNavigation } = this.props;
         const { loading } = this.state;
         return (
             <View>

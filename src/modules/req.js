@@ -1,8 +1,9 @@
 import axios from 'axios';
+import env from '../env.json';
 import { AsyncStorage } from 'react-native';
 
 // const baseURL = 'http://192.168.100.101:8080/api';
-const baseURL = 'http://192.168.43.137:8080/api';
+const baseURL = `${env.api_host}:${env.api_port}/api`;
 
 export default async (route = '', method = '', options = {}) => {
     console.log(`Start Request : ${baseURL + route}`);

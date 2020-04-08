@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, ProgressBarAndroid, TouchableNativeFeedback } from 'react-native';
 import { Card, Divider, Button, SearchBar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Loader from '../../components/Loader';
 
 const styles = {
     container: {
@@ -19,56 +20,96 @@ const styles = {
 
 export default class StorePart extends React.Component {
 
-    _refresh() {
-        // todo : refreshing list
+    state = {
+        ready: false,
+        user: null,
+        products: null
+    }
+
+    async componentDidMount() {
+        await this._fetchAccount();
+    }
+
+    async _fetchAccount() {
+        const { models, user } = this.props;
+        this.setState({ ready: false });
+        const currentUser = await models.User.single(user.id);
+        this.setState({ user: currentUser });
+        if (currentUser.store) {
+            await this._fetchProducts();
+        }
+        this.setState({ ready: true });
+    }
+
+    async _fetchProducts() {
+        const { models } = this.props;
+        const { user } = this.state;
+        this.setState({ ready: false });
+        const products = await models.Product.collection({
+            attributes: ['id', 'name', 'quantity', 'price', 'photo'],
+            where: {
+                store_id: user.store.id
+            }
+        });
+        this.setState({ products, ready: true });
     }
 
     render() {
         const { stackNavigation, tabNavigation } = this.props;
+        const { ready, user, products } = this.state;
         return (
-            <View>
-                <View>
-                    <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
-                    <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />
-                </View>
-                <ScrollView>
-                    <View style={styles.container}>
-                        <View style={[styles.items, {
-                            paddingTop: 15,
-                            paddingLeft: 15,
-                            paddingRight: 7.5
-                        }]}>
-                            <TouchableNativeFeedback style={{ flex: 1 }} onPress={() => { stackNavigation.navigate('AddStore', { refresh: this._refresh.bind(this) }) }}>
-                                <Card
-                                    containerStyle={{ justifyContent: 'center', alignItems: 'center', flex: 1, margin: 0 }}>
-                                    <Icon name="plus-circle-outline" size={100} />
-                                </Card>
-                            </TouchableNativeFeedback>
-                        </View>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, i) => (
-                            <View style={[styles.items, {
-                                paddingTop: 15,
-                                paddingLeft: i % 2 != 0 ? 15 : 7.5,
-                                paddingRight: i % 2 != 0 ? 7.5 : 15
-                            }]} key={i}>
-                                <Card
-                                    title={`Nama Toko ${i}`}
-                                    containerStyle={{ margin: 0 }}
-                                    image={{ uri: i % 2 == 0 ? 'http://home.bt.com/images/the-20-best-views-in-the-uk-revealed-136417214455702601-170411144310.jpg' : 'https://media-cdn.tripadvisor.com/media/photo-s/0f/73/e5/c9/amazing-view-of-taal.jpg' }}
-                                    imageProps={{ resizeMode: 'cover' }}
-                                    imageStyle={{ height: 100 }}>
-                                    <Divider style={styles.divider} />
-                                    <View style={styles.action}>
-                                        <View style={{ flex: 1 }}>
-                                            <Button raised title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
-                                        </View>
-                                    </View>
-                                </Card>
-                            </View>
-                        ))}
+            ready ? (
+                <View style={{ flex: 1 }}>
+                    <View>
+                        <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
+                        <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />
                     </View>
-                </ScrollView>
-            </View>
+                    {user.store ? (
+                        <ScrollView style={{ flex: 1 }}>
+                            <View style={styles.container}>
+                                <View style={[styles.items, {
+                                    paddingTop: 15,
+                                    paddingLeft: 15,
+                                    paddingRight: 7.5
+                                }]}>
+                                    <TouchableNativeFeedback style={{ flex: 1 }} onPress={() => { stackNavigation.navigate('RegisterProduct', { onDone: this._fetchProducts.bind(this), store: user.store }) }}>
+                                        <Card
+                                            containerStyle={{ justifyContent: 'center', alignItems: 'center', flex: 1, margin: 0 }}>
+                                            <Icon name="plus-circle-outline" size={100} />
+                                        </Card>
+                                    </TouchableNativeFeedback>
+                                </View>
+                                {products.rows.map((item, i) => (
+                                    <View style={[styles.items, {
+                                        paddingTop: 15,
+                                        paddingLeft: i % 2 != 0 ? 15 : 7.5,
+                                        paddingRight: i % 2 != 0 ? 7.5 : 15
+                                    }]} key={i}>
+                                        <Card
+                                            title={item.name}
+                                            containerStyle={{ margin: 0 }}
+                                            image={{ uri: item.photo }}
+                                            imageProps={{ resizeMode: 'cover' }}
+                                            imageStyle={{ height: 100 }}>
+                                            <Divider style={styles.divider} />
+                                            <View style={styles.action}>
+                                                <View style={{ flex: 1 }}>
+                                                    <Button raised title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                </View>
+                                            </View>
+                                        </Card>
+                                    </View>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    ) : (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+                                <Text style={{ textAlign: 'center', marginBottom: 10 }}>Anda belum terdaftar sebagai akun warung. Mulai buat warung anda dengan tap tombol dibawah</Text>
+                                <Button raised title="BUAT WARUNG" backgroundColor="#2ecc71" icon={{ name: 'store' }} onPress={() => { stackNavigation.navigate('RegisterStore', { onDone: this._fetchAccount.bind(this) }) }} />
+                            </View>
+                        )}
+                </View>
+            ) : <Loader />
         )
     }
 

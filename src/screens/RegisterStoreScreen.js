@@ -5,7 +5,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import ImagePicker from 'react-native-image-picker';
 
-export default class AddStoreScreen extends React.Component {
+export default class RegisterStoreScreen extends React.Component {
 
     static navigationOptions = {
         title: 'Tambah Warung'
@@ -14,6 +14,8 @@ export default class AddStoreScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: false,
+            name: '',
             openTimePicker: false,
             closeTimePicker: false,
             openTime: '',
@@ -57,19 +59,28 @@ export default class AddStoreScreen extends React.Component {
         });
     }
 
-    _done() {
-        const { navigation } = this.props;
-        const { params: previousPage } = navigation.state;
+    async _done() {
+        const { name, openTime, closeTime, photo } = this.state;
+        const { navigation, screenProps: { models } } = this.props;
+        const { params } = navigation.state;
+        this.setState({ loading: true });
+        const store = await models.Store.create({
+            name,
+            open: openTime,
+            close: closeTime,
+            photo
+        });
+        this.setState({ loading: false });
         navigation.goBack();
-        previousPage.refresh();
+        params.onDone();
     }
 
     render() {
-        const { openTime, closeTime, photo } = this.state;
+        const { name, openTime, closeTime, photo, loading } = this.state;
         return (
             <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
                 <FormLabel>Nama Warung</FormLabel>
-                <FormInput placeholder="Isi Nama Warung.." />
+                <FormInput value={name} placeholder="Isi Nama Warung.." onChangeText={(text) => this.setState({ name: text })} />
                 <FormLabel>Waktu Buka</FormLabel>
                 <TouchableNativeFeedback onPress={this._triggerOpenTimeModal.bind(this)}>
                     <View>
@@ -92,7 +103,7 @@ export default class AddStoreScreen extends React.Component {
 
                 <Divider style={{ margin: 15, backgroundColor: '#bdc3c7' }} />
 
-                <Button onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
+                <Button loading={loading} disabled={!name || !openTime || !closeTime || !photo} onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
 
 
                 <DateTimePicker
