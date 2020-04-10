@@ -15,7 +15,7 @@ export default class AccountPart extends React.Component {
 
     _onLogout() {
         const { stackNavigation } = this.props;
-        stackNavigation.replace('Login');
+        this.props.onLogout();
     }
 
     render() {

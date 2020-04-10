@@ -9,6 +9,7 @@
   "dependencies": {
     "@edgarjeremy/sirius.adapter": "^1.0.25",
     "@react-native-community/async-storage": "^1.9.0",
+    "@turf/turf": "^5.1.6",
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
@@ -20,6 +21,7 @@
     "react-native-image-picker": "^0.27.1",
     "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-modal-datetime-picker": "^6.0.0",
+    "react-native-numeric-input": "^1.8.3",
     "react-native-paper": "^2.2.3",
     "react-native-parallax-header": "^1.0.6",
     "react-native-parallax-scroll-view": "^0.21.3",
@@ -29,7 +31,8 @@
     "react-native-swipe-up-down": "^1.0.7",
     "react-native-vector-icons": "^6.0.2",
     "react-navigation": "^2.18.2",
-    "react-navigation-material-bottom-tabs": "^0.4.0"
+    "react-navigation-material-bottom-tabs": "^0.4.0",
+    "rn-placeholder": "^3.0.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

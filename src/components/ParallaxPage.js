@@ -148,6 +148,7 @@ export default class ParallaxPage extends Component {
 const styles = StyleSheet.create({
     fill: {
         flex: 1,
+        backgroundColor: '#ffffff'
     },
     content: {
         flex: 1,

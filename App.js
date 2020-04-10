@@ -33,10 +33,17 @@ class App extends React.Component {
 		let user;
 		try {
 			user = await authProvider.get();
-		} catch(e) {}
+		} catch (e) { }
 		setTimeout(() => {
 			this.setState({ models, authProvider, user, ready: true });
 		}, 3000);
+	}
+
+	async onLogout() {
+		const { authProvider } = this.state;
+		this.setState({ ready: false });
+		await authProvider.remove();
+		this.setState({ user: null, ready: true });
 	}
 
 	render() {
@@ -45,7 +52,7 @@ class App extends React.Component {
 			ready ? (
 				!user ?
 					<LoginScreen authProvider={authProvider} onLogin={(user) => this.setState({ user })} /> :
-					<Routes screenProps={{ user, models, authProvider }} />
+					<Routes screenProps={{ user, models, onLogout: this.onLogout.bind(this), authProvider }} />
 			) : <Wait />
 		)
 	}

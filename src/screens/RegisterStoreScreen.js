@@ -20,8 +20,18 @@ export default class RegisterStoreScreen extends React.Component {
             closeTimePicker: false,
             openTime: '',
             closeTime: '',
-            photo: ''
+            photo: '',
+            address: '',
+            location: { type: 'Point', coordinates: [0, 0] }
         }
+    }
+
+    componentDidMount() {
+        navigator.geolocation.getCurrentPosition((position) => {
+            this.setState({
+                location: { type: 'Point', coordinates: [position.coords.longitude, position.coords.latitude] }
+            });
+        });
     }
 
     _handleOpenTimePick(openTime) {
@@ -60,15 +70,17 @@ export default class RegisterStoreScreen extends React.Component {
     }
 
     async _done() {
-        const { name, openTime, closeTime, photo } = this.state;
+        const { name, address, openTime, closeTime, photo, location } = this.state;
         const { navigation, screenProps: { models } } = this.props;
         const { params } = navigation.state;
         this.setState({ loading: true });
         const store = await models.Store.create({
             name,
+            address,
             open: openTime,
             close: closeTime,
-            photo
+            photo,
+            location: location
         });
         this.setState({ loading: false });
         navigation.goBack();
@@ -76,11 +88,13 @@ export default class RegisterStoreScreen extends React.Component {
     }
 
     render() {
-        const { name, openTime, closeTime, photo, loading } = this.state;
+        const { name, address, openTime, closeTime, photo, loading } = this.state;
         return (
             <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
                 <FormLabel>Nama Warung</FormLabel>
                 <FormInput value={name} placeholder="Isi Nama Warung.." onChangeText={(text) => this.setState({ name: text })} />
+                <FormLabel>Alamat Warung</FormLabel>
+                <FormInput value={address} placeholder="Isi Alamat Warung.." onChangeText={(text) => this.setState({ address: text })} />
                 <FormLabel>Waktu Buka</FormLabel>
                 <TouchableNativeFeedback onPress={this._triggerOpenTimeModal.bind(this)}>
                     <View>
@@ -103,7 +117,7 @@ export default class RegisterStoreScreen extends React.Component {
 
                 <Divider style={{ margin: 15, backgroundColor: '#bdc3c7' }} />
 
-                <Button loading={loading} disabled={!name || !openTime || !closeTime || !photo} onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
+                <Button loading={loading} disabled={!name || !address || !openTime || !closeTime || !photo} onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
 
 
                 <DateTimePicker

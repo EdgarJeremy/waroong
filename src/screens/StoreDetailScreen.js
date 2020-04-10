@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, Image, Dimensions, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
+import { View, Text, Image, Dimensions, TouchableOpacity, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SearchBar, Card } from 'react-native-elements';
+import { Placeholder, PlaceholderMedia, PlaceholderLine, Fade } from 'rn-placeholder';
 import ParallaxPage from '../components/ParallaxPage';
+import QuantityInput from '../components/QuantityInput';
 
-const styles = {
+const styles = StyleSheet.create({
     headerStyle: { backgroundColor: '#f1f2f6' },
     foregroundContainerStyle: {
         backgroundColor: 'rgba(0,0,0,.4)'
@@ -17,7 +19,7 @@ const styles = {
     },
     headerTitle: { textAlign: 'center', fontSize: 15, fontWeight: 'bold', color: '#333333', textShadowColor: '#f1f2f6', textShadowRadius: 10 },
     headerActions: { flex: 1, flexDirection: 'row' },
-    contentContainer: { backgroundColor: '#ffffff' },
+    contentContainer: { backgroundColor: '#ffffff', flex: 1 },
     contentTitle: { paddingTop: 15, paddingLeft: 15, fontWeight: 'bold', fontSize: 25 },
     contentSubtitle: { fontSize: 15, paddingLeft: 15 },
     cardContainer: { padding: 0 },
@@ -25,8 +27,8 @@ const styles = {
     cardImage: { flex: 1, height: 120, width: '100%' },
     cardDetailContainer: { flex: 1.5, padding: 12 },
     cardTitle: { flex: 1, fontSize: 16, fontWeight: 'bold' },
-    cardActions: { flex: 0.3, alignItems: 'flex-end', padding: 10 }
-}
+    cardActions: { flex: 1, alignItems: 'flex-end', padding: 10 }
+})
 
 export default class StoreDetailScreen extends React.Component {
 
@@ -37,12 +39,27 @@ export default class StoreDetailScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            headerVisibility: false
+            headerVisibility: false,
+            store: props.navigation.state.params.store,
+            ready: false,
+            products: []
         }
     }
 
+    async componentDidMount() {
+        const { store } = this.state;
+        const { screenProps: { models } } = this.props;
+        const products = await models.Product.collection({
+            attributes: ['id', 'name', 'quantity', 'price', 'photo'],
+            where: {
+                store_id: store.id
+            }
+        });
+        this.setState({ ready: true, products });
+    }
+
     render() {
-        const { headerVisibility } = this.state;
+        const { headerVisibility, store, ready, products } = this.state;
         return (
             <ParallaxPage
                 // overlayOpacity={0.4}
@@ -55,7 +72,7 @@ export default class StoreDetailScreen extends React.Component {
                         this.setState({ headerVisibility: false });
                 }}
                 headerStyle={styles.headerStyle}
-                headerImage={{ uri: 'https://lh3.ggpht.com/p/AF1QipNnnIAE4WDU2LPI4neylB30_6vUyvy6sIWY7tGG=s1536' }}
+                headerImage={{ uri: store.photo }}
                 foregroundContainerStyle={styles.foregroundContainerStyle}
                 onPressHeaderImage={() => alert('Header tap')}
                 renderHeader={() => (
@@ -67,7 +84,7 @@ export default class StoreDetailScreen extends React.Component {
                         </View>
                         <View style={[styles.headerParts, { alignItems: 'center' }]}>
                             {headerVisibility && (
-                                <Text style={styles.headerTitle}>Toko Tersebut</Text>
+                                <Text style={styles.headerTitle}>{store.name}</Text>
                             )}
                         </View>
                         <View style={[styles.headerParts, { alignItems: 'flex-end' }]}>
@@ -80,38 +97,59 @@ export default class StoreDetailScreen extends React.Component {
                 )}
                 renderContent={() => (
                     <View style={styles.contentContainer}>
-                        <Text style={styles.contentTitle}>Toko tersebut</Text>
-                        <Text style={styles.contentSubtitle}>Jl. Gunung Potong, Singkil Satu, Singkil, Kota Manado, Sulawesi Utara</Text>
+                        <Text style={styles.contentTitle}>{store.name}</Text>
+                        <Text style={styles.contentSubtitle}>{store.address}</Text>
                         <View style={{ paddingLeft: 15, flexDirection: 'row', paddingTop: 10 }}>
                             <View style={{ marginTop: 5, borderWidth: 2, borderRadius: 5, borderColor: '#2ecc71', padding: 5 }}>
                                 <Text style={{ minWidth: 50, textAlign: 'center', color: '#2ecc71' }}>BUKA</Text>
                             </View>
                             <View style={{ justifyContent: 'center', paddingLeft: 10 }}>
-                                <Text>06:00 - 22:00</Text>
+                                <Text>{store.open} - {store.close}</Text>
                             </View>
                         </View>
                         <View>
-                            {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((i, k) => (
-                                <TouchableNativeFeedback key={k}>
-                                    <Card flexDirection="row" containerStyle={styles.cardContainer}>
-                                        <View style={styles.cardImageContainer}>
-                                            <Image style={styles.cardImage} resizeMode="cover" source={{ uri: 'https://www.leehealthwellbeing.com.au/wp-content/uploads/2016/02/graphic_product_tangible.png' }} />
-                                        </View>
-                                        <View style={[styles.cardDetailContainer, { alignItems: 'baseline' }]}>
-                                            <View style={{ flex: 1, justifyContent: 'flex-start' }}>
-                                                <Text style={styles.cardTitle}>Nama Produk {k + 1}</Text>
-                                            </View>
-                                            <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 3 }}>
-                                                <Text>Rp.15000</Text>
-                                                <Text>/Sachet</Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.cardActions}>
-                                            <MaterialCommunityIcons name="heart" color="#e74c3c" size={25} />
-                                        </View>
+                            {!ready ? (
+                                [1, 1, 1, 1].map((i, k) => (
+                                    <Card key={k} flexDirection="row">
+                                        <Placeholder
+                                            Animation={Fade}
+                                            Left={PlaceholderMedia}
+                                        >
+                                            <PlaceholderLine width={80} />
+                                            <PlaceholderLine />
+                                            <PlaceholderLine width={30} />
+                                        </Placeholder>
                                     </Card>
-                                </TouchableNativeFeedback>
-                            ))}
+                                ))
+                            ) : (
+                                    products.rows.map((p, k) => (
+                                        <TouchableNativeFeedback key={k}>
+                                            <Card flexDirection="row" containerStyle={styles.cardContainer}>
+                                                <View style={styles.cardImageContainer}>
+                                                    <Image style={styles.cardImage} resizeMode="cover" source={{ uri: p.photo }} />
+                                                </View>
+                                                <View style={[styles.cardDetailContainer, { alignItems: 'baseline' }]}>
+                                                    <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                                                        <Text style={styles.cardTitle}>{p.name}</Text>
+                                                    </View>
+                                                    <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 3 }}>
+                                                        <Text>Rp. {p.price}</Text>
+                                                        <Text>/pcs</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={styles.cardActions}>
+                                                    <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+                                                        <MaterialCommunityIcons name="heart" color="#e74c3c" size={25} />
+                                                    </View>
+                                                    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                                                        <QuantityInput />
+                                                    </View>
+                                                </View>
+                                            </Card>
+                                        </TouchableNativeFeedback>
+                                    ))
+                                )}
+
                         </View>
                     </ View>
                 )}
