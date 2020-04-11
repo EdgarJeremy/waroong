@@ -3,9 +3,10 @@ import { createStackNavigator } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import SiriusAdapter from '@edgarjeremy/sirius.adapter';
-import { Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import env from './src/env.json';
 import Wait from './src/components/Wait';
+import FloatingCounter from './src/components/FloatingCounter';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import StoreDetailScreen from './src/screens/StoreDetailScreen';
@@ -13,6 +14,7 @@ import PrivateChatScreen from './src/screens/PrivateChatScreen';
 import EditAccountScreen from './src/screens/EditAccountScreen';
 import RegisterStoreScreen from './src/screens/RegisterStoreScreen';
 import RegisterProductScreen from './src/screens/RegisterProductScreen';
+import CheckoutScreen from './src/screens/CheckoutScreen';
 
 const host = env.api_host;
 const port = env.api_port;
@@ -62,18 +64,22 @@ class App extends React.Component {
 const Routes = createStackNavigator({
 	Home: {
 		screen: HomeScreen,
-		navigationOptions: ({ navigation }) => ({
-			title: "WAROONG",
-			headerRight: (
-				<View style={{ flex: 1, flexDirection: 'row' }}>
-					<TouchableOpacity>
-						<View style={{ marginRight: 10 }}>
-							<Icon name="notifications" size={30} />
-						</View>
-					</TouchableOpacity>
-				</View>
-			)
-		})
+		navigationOptions: ({ navigation }) => {
+			const { params = {} } = navigation.state;
+			return ({
+				title: "WAROONG",
+				headerRight: (
+					<View style={{ flex: 1, flexDirection: 'row' }}>
+						<TouchableOpacity onPress={() => navigation.navigate('Checkout')}>
+							<View style={{ marginRight: 10 }}>
+								<Icon name="basket" size={30} />
+								{params.transactionCount ? <FloatingCounter text={params.transactionCount} /> : null}
+							</View>
+						</TouchableOpacity>
+					</View>
+				)
+			})
+		}
 	},
 	StoreDetail: {
 		screen: StoreDetailScreen
@@ -90,6 +96,9 @@ const Routes = createStackNavigator({
 	EditAccount: {
 		screen: EditAccountScreen
 	},
+	Checkout: {
+		screen: CheckoutScreen
+	}
 }, {
 	navigationOptions: {
 		headerStyle: {

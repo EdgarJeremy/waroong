@@ -11,14 +11,23 @@ import ChatPart from './parts/ChatPart';
 
 class HomeScreen extends React.Component {
 
-    static navigationOptions = {
-        headerLeft: null
+    componentDidMount() {
+        this.fetchTransactions();
+    }
+
+    async fetchTransactions() {
+        const { screenProps: { models }, navigation } = this.props;
+        const transactions = await models.Transaction.collection({ distinct: true, attributes: ['id'] });
+        navigation.setParams({
+            transactionCount: transactions.count
+        });
     }
 
     render() {
         return <Routes screenProps={{
             ...this.props.screenProps,
-            stackNavigation: this.props.navigation
+            stackNavigation: this.props.navigation,
+            fetchTransactions: this.fetchTransactions.bind(this)
         }} />
     }
 }
