@@ -13,22 +13,26 @@ const styles = {
 
 export default class AccountPart extends React.Component {
 
+    componentDidMount() {
+
+    }
+
     _onLogout() {
         const { stackNavigation } = this.props;
         this.props.onLogout();
     }
 
     render() {
-        const { stackNavigation, tabNavigation } = this.props;
+        const { stackNavigation, tabNavigation, user } = this.props;
         return (
             <View style={styles.container}>
                 <ScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', elevation: 1, backgroundColor: '#f1f2f6', paddingBottom: 15 }}>
-                        <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 10 }}>Lorem Ipsum</Text>
-                        <Image resizeMode="cover" source={{ uri: 'https://scontent.fsub1-1.fna.fbcdn.net/v/t1.0-9/44533063_562686290826884_7598173544672919552_n.jpg?_nc_cat=105&_nc_ht=scontent.fsub1-1.fna&oh=52e956b8294f026554c9df33ac941d0e&oe=5C69E88B' }}
+                        <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 10 }}>{user.name}</Text>
+                        <Image resizeMode="cover" source={{ uri: user.avatar }}
                             style={{ marginBottom: 10, borderWidth: 0, borderColor: '#ff4757', width: 130, height: 130, borderRadius: 100 }}
                         />
-                        <Text style={{ marginBottom: 5, color: '#3498db', textDecorationLine: 'underline', fontWeight: 'bold' }}>loremipsum2121@gmail.com</Text>
+                        <Text style={{ marginBottom: 5, color: '#3498db', textDecorationLine: 'underline', fontWeight: 'bold' }}>{user.email}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderTopColor: '#95a5a6', borderTopWidth: 0.3, borderBottomColor: '#95a5a6', borderBottomWidth: 0.3, padding: 10 }}>
                         <InfoBadge text="Warung - 16" icon="store" tintColor="#2ecc71" />

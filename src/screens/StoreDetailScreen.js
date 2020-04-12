@@ -86,7 +86,7 @@ export default class StoreDetailScreen extends React.Component {
                 });
             }
         }
-        this.setState({ cart }, () => console.log(this.state.cart));
+        this.setState({ cart });
     }
 
     async onCheckout() {

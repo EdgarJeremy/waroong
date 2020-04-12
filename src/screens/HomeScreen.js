@@ -12,7 +12,11 @@ import ChatPart from './parts/ChatPart';
 class HomeScreen extends React.Component {
 
     componentDidMount() {
+        const { screenProps: { socket } } = this.props;
         this.fetchTransactions();
+        socket.on('NEW_TRANSACTION', () => {
+            this.fetchTransactions();
+        });
     }
 
     async fetchTransactions() {
@@ -50,25 +54,35 @@ const Routes = createMaterialTopTabNavigator({
         screen: ({ screenProps, navigation }) => {
             return <StorePart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
         },
-        navigationOptions: {
-            tabBarIcon: ({ tintColor }) => <Icon name="store" size={25} color={tintColor} />,
-            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>WARUNG ANDA</Text>
+        navigationOptions: ({ navigation }) => {
+            const { params = { } } = navigation.state;
+            return {
+                tabBarIcon: ({ tintColor }) => {
+                    return (
+                        <View>
+                            <Icon name="store" size={25} color={tintColor} />
+                            {params.transactionCount ? <FloatingCounter text={params.transactionCount} /> : null}
+                        </View>
+                    )
+                },
+                tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>WARUNG ANDA</Text>
+            }
         }
     },
-    Chat: {
-        screen: ({ screenProps, navigation }) => {
-            return <ChatPart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
-        },
-        navigationOptions: {
-            tabBarIcon: ({ tintColor }) => (
-                <View>
-                    <Icon name="chat" size={25} color={tintColor} />
-                    <FloatingCounter text={4} />
-                </View>
-            ),
-            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>OBROLAN</Text>
-        }
-    },
+    // Chat: {
+    //     screen: ({ screenProps, navigation }) => {
+    //         return <ChatPart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />
+    //     },
+    //     navigationOptions: {
+    //         tabBarIcon: ({ tintColor }) => (
+    //             <View>
+    //                 <Icon name="chat" size={25} color={tintColor} />
+    //                 <FloatingCounter text={4} />
+    //             </View>
+    //         ),
+    //         tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>OBROLAN</Text>
+    //     }
+    // },
     Account: {
         screen: ({ screenProps, navigation }) => {
             return <AccountPart {...screenProps} stackNavigation={screenProps.stackNavigation} tabNavigation={navigation} />

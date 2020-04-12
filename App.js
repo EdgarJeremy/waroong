@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import SiriusAdapter from '@edgarjeremy/sirius.adapter';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import io from 'socket.io-client';
 import env from './src/env.json';
 import Wait from './src/components/Wait';
 import FloatingCounter from './src/components/FloatingCounter';
@@ -20,6 +21,7 @@ import TransactionScreen from './src/screens/TransactionScreen';
 const host = env.api_host;
 const port = env.api_port;
 const adapter = new SiriusAdapter(host, port, AsyncStorage);
+const socket = io(`${host}:${port}`);
 
 class App extends React.Component {
 
@@ -61,7 +63,7 @@ class App extends React.Component {
 			ready ? (
 				!user ?
 					<LoginScreen authProvider={authProvider} onLogin={(user) => this.setState({ user })} /> :
-					<Routes screenProps={{ user, models, authProvider, onLogout: this.onLogout.bind(this), update: this.update.bind(this) }} />
+					<Routes screenProps={{ user, models, authProvider, socket, onLogout: this.onLogout.bind(this), update: this.update.bind(this) }} />
 			) : <Wait />
 		)
 	}

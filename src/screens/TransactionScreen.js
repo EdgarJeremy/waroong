@@ -42,7 +42,8 @@ export default class TransactionScreen extends React.Component {
                     model: 'Product',
                     attributes: ['id', 'name', 'price', 'photo']
                 }]
-            }]
+            }],
+            order: [['created_at', 'desc']]
         });
         this.setState({ transactions, ready: true });
     }
@@ -102,17 +103,6 @@ export default class TransactionScreen extends React.Component {
                             </View>
                             <Divider style={{ marginTop: 10, marginBottom: 10 }} />
                             <View>
-                                {/* {
-                                    t.proof ? (
-                                        t.status === 'ordered' ? (
-                                            <Button backgroundColor={t.verified ? '#2ecc71' : '#3498db'} title={t.verified ? 'MENUNGGU PROSES PENJUAL' : 'MENUNGGU VERIFIKASI PEMBAYARAN'} />
-                                        ) : (t.status === 'process' ? (
-                                            <Text>DIPROSES</Text>
-                                        ) : <Text>SELESAI</Text>)
-                                    ) : (
-                                            <Button onPress={() => this.pickPhoto(t)} raised title="UNGGAH BUKTI PEMBAYARAN" backgroundColor="#3498db" icon={{ name: 'receipt' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
-                                        )
-                                } */}
                                 {
                                     t.status === 'ordered' ? (
                                         <Button onPress={() => this.onProcessOrder(t)} title="PROSES PESANAN" backgroundColor="#3498db" icon={{ name: 'send' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />

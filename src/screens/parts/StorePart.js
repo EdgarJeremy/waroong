@@ -22,6 +22,7 @@ export default class StorePart extends React.Component {
 
     state = {
         ready: false,
+        transactionCount: 0,
         products: {
             rows: [],
             count: 0
@@ -29,8 +30,12 @@ export default class StorePart extends React.Component {
     }
 
     async componentDidMount() {
-        console.log(this.props);
+        const { socket } = this.props;
+        socket.on('VERIFIED_TRANSACTION', () => {
+            this.fetchTransactions();
+        });
         await this._fetchProducts();
+        await this.fetchTransactions();
         this.setState({ ready: true });
     }
 
@@ -48,13 +53,20 @@ export default class StorePart extends React.Component {
         }
     }
 
-    componentWillReceiveProps(n) {
-        console.log(this.props);
+    async fetchTransactions() {
+        const { models, user, tabNavigation } = this.props;
+        if (user.store) {
+            const transactions = await models.Transaction.collection({ distinct: true, attributes: ['id'], where: { verified: true, store_id: user.store.id } });
+            this.setState({ transactionCount: transactions.count });
+            tabNavigation.setParams({
+                transactionCount: transactions.count
+            });
+        }
     }
 
     render() {
         const { stackNavigation, tabNavigation, user } = this.props;
-        const { ready, products } = this.state;
+        const { ready, products, transactionCount } = this.state;
         return (
             ready ? (
                 <View style={{ flex: 1 }}>
@@ -66,7 +78,7 @@ export default class StorePart extends React.Component {
                     {user.store ? (
                         <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
                             <View>
-                                <Button title="TRANSAKSI MASUK" icon={{ name: 'receipt' }} onPress={() => stackNavigation.navigate('Transaction')} />
+                                <Button title={`TRANSAKSI MASUK${transactionCount ? ` (${transactionCount})` : ''}`} icon={{ name: 'receipt' }} onPress={() => stackNavigation.navigate('Transaction')} />
                             </View>
                             <ScrollView style={{ flex: 1 }}>
                                 <View style={styles.container}>

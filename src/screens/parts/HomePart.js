@@ -114,9 +114,9 @@ export default class HomePart extends React.Component {
                                             <View style={{ flex: 1 }}>
                                                 <Button onPress={() => call({ number: s.user.phone })} title="HUBUNGI" backgroundColor="#2ecc71" icon={{ name: 'phone' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
                                             </View>
-                                            <View style={{ flex: 1 }}>
+                                            {/* <View style={{ flex: 1 }}>
                                                 <Button title="CHAT" backgroundColor="#3498db" icon={{ name: 'chat' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
-                                            </View>
+                                            </View> */}
                                         </View>
                                     </Card>
                                 ))}

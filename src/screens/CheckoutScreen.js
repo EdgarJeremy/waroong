@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, ProgressBarAndroid } from 'react-native';
+import { View, Text, Image, ProgressBarAndroid, ScrollView } from 'react-native';
 import { Card, Divider, Button } from 'react-native-elements';
 import { Placeholder, PlaceholderMedia, PlaceholderLine, Fade } from 'rn-placeholder';
 import numeral from 'numeral';
@@ -58,6 +58,7 @@ export default class CheckoutScreen extends React.Component {
             } else {
                 this.setState({ loading: true });
                 await l.update({
+                    verified: true,
                     proof: 'data:image/jpeg;base64,' + response.data
                 });
                 this.setState({ loading: false });
@@ -66,57 +67,66 @@ export default class CheckoutScreen extends React.Component {
         });
     }
 
+    async onDoneOrder(transaction) {
+        const { screenProps: { models } } = this.props;
+        this.setState({ loading: true });
+        await transaction.update({ status: 'done' });
+        await this.fetchTransactions();
+    }
+
     render() {
         const { ready, transactions, loading } = this.state;
         return (
             ready ? (
                 <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
                     {loading ? <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, top: -6 }} /> : null}
-                    {transactions.rows.map((t, i) => (
-                        <Card
-                            key={i}
-                            image={{ uri: t.store.photo }}
-                            imageProps={{ resizeMode: 'cover' }}
-                            featuredTitle={t.store.name}
-                            featuredSubtitle={t.store.user.name}>
-                            <View>
-                                {
-                                    t.transaction_items.map((l, k) => (
-                                        <View key={k} style={{ flexDirection: 'row', borderWidth: 1, borderColor: '#dddddd', padding: 15 }}>
-                                            <Image style={{ width: 50, height: 50 }} source={{ uri: l.product.photo }} />
-                                            <View style={{ marginLeft: 10 }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Nama</Text>
-                                                <Text style={{ fontWeight: 'bold' }}>Harga</Text>
-                                                <Text style={{ fontWeight: 'bold' }}>Qty (total)</Text>
+                    <ScrollView>
+                        {transactions.rows.map((t, i) => (
+                            <Card
+                                key={i}
+                                image={{ uri: t.store.photo }}
+                                imageProps={{ resizeMode: 'cover' }}
+                                featuredTitle={t.store.name}
+                                featuredSubtitle={t.store.user.name}>
+                                <View>
+                                    {
+                                        t.transaction_items.map((l, k) => (
+                                            <View key={k} style={{ flexDirection: 'row', borderWidth: 1, borderColor: '#dddddd', padding: 15 }}>
+                                                <Image style={{ width: 50, height: 50 }} source={{ uri: l.product.photo }} />
+                                                <View style={{ marginLeft: 10 }}>
+                                                    <Text style={{ fontWeight: 'bold' }}>Nama</Text>
+                                                    <Text style={{ fontWeight: 'bold' }}>Harga</Text>
+                                                    <Text style={{ fontWeight: 'bold' }}>Qty (total)</Text>
+                                                </View>
+                                                <View style={{ justifyContent: 'center', alignItems: 'flex-end', flex: 1 }}>
+                                                    <Text>{l.product.name}</Text>
+                                                    <Text>Rp. {numeral(l.product.price).format(',')}</Text>
+                                                    <Text style={{ fontWeight: 'bold', color: '#27ae60' }}>x{l.quantity} (Rp. {numeral(l.quantity * l.product.price).format(',')})</Text>
+                                                </View>
                                             </View>
-                                            <View style={{ justifyContent: 'center', alignItems: 'flex-end', flex: 1 }}>
-                                                <Text>{l.product.name}</Text>
-                                                <Text>Rp. {numeral(l.product.price).format(',')}</Text>
-                                                <Text style={{ fontWeight: 'bold', color: '#27ae60' }}>x{l.quantity} (Rp. {numeral(l.quantity * l.product.price).format(',')})</Text>
-                                            </View>
-                                        </View>
-                                    ))
-                                }
-                            </View>
-                            <View>
-                                <Text style={{ fontSize: 20, color: '#27ae60', fontWeight: 'bold', textAlign: 'center', marginTop: 10 }}>{t.transaction_items.reduce((total, item) => total + item.quantity, 0)} item, subtotal Rp. {numeral(t.transaction_items.reduce((total, item) => total + (item.quantity * item.product.price), 0)).format('0,0')}</Text>
-                            </View>
-                            <Divider style={{ marginTop: 10, marginBottom: 10 }} />
-                            <View>
-                                {
-                                    t.proof ? (
-                                        t.status === 'ordered' ? (
-                                            <Button backgroundColor={t.verified ? '#2ecc71' : '#3498db'} title={t.verified ? 'MENUNGGU PROSES PENJUAL' : 'MENUNGGU VERIFIKASI PEMBAYARAN'} />
-                                        ) : (t.status === 'process' ? (
-                                            <Text>DIPROSES</Text>
-                                        ) : <Text>SELESAI</Text>)
-                                    ) : (
-                                            <Button onPress={() => this.pickPhoto(t)} title="UNGGAH BUKTI PEMBAYARAN" backgroundColor="#3498db" icon={{ name: 'receipt' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
-                                        )
-                                }
-                            </View>
-                        </Card>
-                    ))}
+                                        ))
+                                    }
+                                </View>
+                                <View>
+                                    <Text style={{ fontSize: 20, color: '#27ae60', fontWeight: 'bold', textAlign: 'center', marginTop: 10 }}>{t.transaction_items.reduce((total, item) => total + item.quantity, 0)} item, subtotal Rp. {numeral(t.transaction_items.reduce((total, item) => total + (item.quantity * item.product.price), 0)).format('0,0')}</Text>
+                                </View>
+                                <Divider style={{ marginTop: 10, marginBottom: 10 }} />
+                                <View>
+                                    {
+                                        t.proof ? (
+                                            t.status === 'ordered' ? (
+                                                <Button backgroundColor={t.verified ? '#2ecc71' : '#3498db'} title={t.verified ? 'MENUNGGU PROSES PENJUAL' : 'MENUNGGU VERIFIKASI PEMBAYARAN'} />
+                                            ) : (t.status === 'process' ? (
+                                                <Button onPress={() => this.onDoneOrder(t)} title="SELESAIKAN" backgroundColor="#f1c40f" icon={{ name: 'check' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                            ) : <Button title="SELESAI" backgroundColor="#2ecc71" icon={{ name: 'check' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />)
+                                        ) : (
+                                                <Button onPress={() => this.pickPhoto(t)} title="UNGGAH BUKTI PEMBAYARAN" backgroundColor="#3498db" icon={{ name: 'receipt' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                            )
+                                    }
+                                </View>
+                            </Card>
+                        ))}
+                    </ScrollView>
                 </View>
             ) : (
                     [1, 1, 1, 1].map((i, k) => (
