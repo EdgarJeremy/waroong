@@ -49,7 +49,7 @@ export default class StorePart extends React.Component {
                     store_id: user.store.id
                 }
             });
-            this.setState({ products });
+            this.setState({ products, ready: true });
         }
     }
 
