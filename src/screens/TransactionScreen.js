@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, Text, Image, ProgressBarAndroid } from 'react-native';
+import { View, Text, Image, ProgressBarAndroid, TouchableOpacity } from 'react-native';
 import { Card, Divider, Button } from 'react-native-elements';
 import { Placeholder, PlaceholderMedia, PlaceholderLine, Fade } from 'rn-placeholder';
 import numeral from 'numeral';
+import call from 'react-native-phone-call';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default class CheckoutScreen extends React.Component {
+export default class TransactionScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Transaksi'
+        title: 'Transaksi Masuk'
     }
 
     state = {
@@ -25,15 +26,15 @@ export default class CheckoutScreen extends React.Component {
             distinct: true,
             attributes: ['id', 'verified', 'status', 'proof', 'created_at'],
             where: {
-                user_id: user.id
+                store_id: user.store.id,
+                verified: true
             },
             include: [{
                 model: 'Store',
-                attributes: ['id', 'name', 'photo'],
-                include: [{
-                    model: 'User',
-                    attributes: ['id', 'name']
-                }]
+                attributes: ['id', 'name']
+            }, {
+                model: 'User',
+                attributes: ['id', 'name', 'phone']
             }, {
                 model: 'TransactionItem',
                 attributes: ['id', 'quantity', 'product_id'],
@@ -50,20 +51,11 @@ export default class CheckoutScreen extends React.Component {
         this.fetchTransactions();
     }
 
-    pickPhoto(l) {
-        ImagePicker.showImagePicker({ title: 'Pilih foto bukti pembayaran', cancelButtonTitle: 'Batal', takePhotoButtonTitle: 'Ambil foto', chooseFromLibraryButtonTitle: 'Pilih dari penyimpanan' }, async (response) => {
-            if (response.didCancel) return;
-            if (response.error) {
-                alert(response.error);
-            } else {
-                this.setState({ loading: true });
-                await l.update({
-                    proof: 'data:image/jpeg;base64,' + response.data
-                });
-                this.setState({ loading: false });
-                this.fetchTransactions();
-            }
-        });
+    async onProcessOrder(transaction) {
+        const { screenProps: { models } } = this.props;
+        this.setState({ loading: true });
+        await transaction.update({ status: 'process' });
+        await this.fetchTransactions();
     }
 
     render() {
@@ -74,11 +66,18 @@ export default class CheckoutScreen extends React.Component {
                     {loading ? <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, top: -6 }} /> : null}
                     {transactions.rows.map((t, i) => (
                         <Card
-                            key={i}
-                            image={{ uri: t.store.photo }}
-                            imageProps={{ resizeMode: 'cover' }}
-                            featuredTitle={t.store.name}
-                            featuredSubtitle={t.store.user.name}>
+                            key={i}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1, justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{t.user.name}</Text>
+                                </View>
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
+                                    <TouchableOpacity style={{ backgroundColor: '#2ecc71', padding: 10, borderRadius: 100 }} onPress={() => call({ number: t.user.phone })}>
+                                        <Icon name="phone" color="#ffffff" />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <Divider style={{ marginTop: 10, marginBottom: 10 }} />
                             <View>
                                 {
                                     t.transaction_items.map((l, k) => (
@@ -103,7 +102,7 @@ export default class CheckoutScreen extends React.Component {
                             </View>
                             <Divider style={{ marginTop: 10, marginBottom: 10 }} />
                             <View>
-                                {
+                                {/* {
                                     t.proof ? (
                                         t.status === 'ordered' ? (
                                             <Button backgroundColor={t.verified ? '#2ecc71' : '#3498db'} title={t.verified ? 'MENUNGGU PROSES PENJUAL' : 'MENUNGGU VERIFIKASI PEMBAYARAN'} />
@@ -111,7 +110,18 @@ export default class CheckoutScreen extends React.Component {
                                             <Text>DIPROSES</Text>
                                         ) : <Text>SELESAI</Text>)
                                     ) : (
-                                            <Button onPress={() => this.pickPhoto(t)} title="UNGGAH BUKTI PEMBAYARAN" backgroundColor="#3498db" icon={{ name: 'receipt' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                            <Button onPress={() => this.pickPhoto(t)} raised title="UNGGAH BUKTI PEMBAYARAN" backgroundColor="#3498db" icon={{ name: 'receipt' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                        )
+                                } */}
+                                {
+                                    t.status === 'ordered' ? (
+                                        <Button onPress={() => this.onProcessOrder(t)} title="PROSES PESANAN" backgroundColor="#3498db" icon={{ name: 'send' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                    ) : (
+                                            t.status === 'process' ? (
+                                                <Button loading title="SEDANG DIPROSES" backgroundColor="#f1c40f" containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                            ) : (
+                                                    <Button title="SELESAI" backgroundColor="#2ecc71" icon={{ name: 'check' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                )
                                         )
                                 }
                             </View>

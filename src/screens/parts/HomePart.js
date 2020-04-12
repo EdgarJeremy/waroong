@@ -36,7 +36,7 @@ export default class HomePart extends React.Component {
         super(props);
         this.state = {
             ready: false,
-            loading: true,
+            loading: false,
             stores: null
         };
     }
@@ -109,13 +109,13 @@ export default class HomePart extends React.Component {
                                         <Text style={styles.address}>{s.address}</Text>
                                         <View style={styles.action}>
                                             <View style={{ flex: 1 }}>
-                                                <Button onPress={() => stackNavigation.navigate('StoreDetail', { store: s })} raised title="DETAIL" backgroundColor="#ff4757" icon={{ name: 'chevron-right' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                <Button onPress={() => stackNavigation.navigate('StoreDetail', { store: s })} title="DETAIL" backgroundColor="#ff4757" icon={{ name: 'chevron-right' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
                                             </View>
                                             <View style={{ flex: 1 }}>
-                                                <Button onPress={() => call({ number: '081340234605' })} raised title="HUBUNGI" backgroundColor="#2ecc71" icon={{ name: 'phone' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                <Button onPress={() => call({ number: s.user.phone })} title="HUBUNGI" backgroundColor="#2ecc71" icon={{ name: 'phone' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
                                             </View>
                                             <View style={{ flex: 1 }}>
-                                                <Button raised title="CHAT" backgroundColor="#3498db" icon={{ name: 'chat' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                <Button title="CHAT" backgroundColor="#3498db" icon={{ name: 'chat' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
                                             </View>
                                         </View>
                                     </Card>

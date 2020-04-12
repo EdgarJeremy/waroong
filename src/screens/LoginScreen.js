@@ -78,7 +78,6 @@ export default class LoginScreen extends React.Component {
         this.setState({ loading: true }, () => {
             authProvider.set(loginData).then((user) => {
                 this.setState({ loading: false }, () => {
-                    // navigation.navigate('Home');
                     this.props.onLogin(user);
                 });
             }).catch((err) => {

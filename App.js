@@ -15,6 +15,7 @@ import EditAccountScreen from './src/screens/EditAccountScreen';
 import RegisterStoreScreen from './src/screens/RegisterStoreScreen';
 import RegisterProductScreen from './src/screens/RegisterProductScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
+import TransactionScreen from './src/screens/TransactionScreen';
 
 const host = env.api_host;
 const port = env.api_port;
@@ -48,13 +49,19 @@ class App extends React.Component {
 		this.setState({ user: null, ready: true });
 	}
 
+	async update() {
+		const { authProvider } = this.state;
+		const user = await authProvider.get();
+		this.setState({ user });
+	}
+
 	render() {
 		const { models, authProvider, user, ready } = this.state;
 		return (
 			ready ? (
 				!user ?
 					<LoginScreen authProvider={authProvider} onLogin={(user) => this.setState({ user })} /> :
-					<Routes screenProps={{ user, models, onLogout: this.onLogout.bind(this), authProvider }} />
+					<Routes screenProps={{ user, models, authProvider, onLogout: this.onLogout.bind(this), update: this.update.bind(this) }} />
 			) : <Wait />
 		)
 	}
@@ -98,6 +105,9 @@ const Routes = createStackNavigator({
 	},
 	Checkout: {
 		screen: CheckoutScreen
+	},
+	Transaction: {
+		screen: TransactionScreen
 	}
 }, {
 	navigationOptions: {

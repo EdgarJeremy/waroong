@@ -16,8 +16,8 @@ class HomeScreen extends React.Component {
     }
 
     async fetchTransactions() {
-        const { screenProps: { models }, navigation } = this.props;
-        const transactions = await models.Transaction.collection({ distinct: true, attributes: ['id'] });
+        const { screenProps: { models, user }, navigation } = this.props;
+        const transactions = await models.Transaction.collection({ distinct: true, attributes: ['id'], where: { user_id: user.id } });
         navigation.setParams({
             transactionCount: transactions.count
         });

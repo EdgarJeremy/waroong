@@ -22,50 +22,52 @@ export default class StorePart extends React.Component {
 
     state = {
         ready: false,
-        user: null,
-        products: null
+        products: {
+            rows: [],
+            count: 0
+        }
     }
 
     async componentDidMount() {
-        await this._fetchAccount();
-    }
-
-    async _fetchAccount() {
-        const { models, user } = this.props;
-        this.setState({ ready: false });
-        const currentUser = await models.User.single(user.id);
-        this.setState({ user: currentUser });
-        if (currentUser.store) {
-            await this._fetchProducts();
-        }
+        console.log(this.props);
+        await this._fetchProducts();
         this.setState({ ready: true });
     }
 
     async _fetchProducts() {
-        const { models } = this.props;
-        const { user } = this.state;
-        this.setState({ ready: false });
-        const products = await models.Product.collection({
-            attributes: ['id', 'name', 'quantity', 'price', 'photo'],
-            where: {
-                store_id: user.store.id
-            }
-        });
-        this.setState({ products, ready: true });
+        const { models, user } = this.props;
+        if (user.store) {
+            this.setState({ ready: false });
+            const products = await models.Product.collection({
+                attributes: ['id', 'name', 'quantity', 'price', 'photo'],
+                where: {
+                    store_id: user.store.id
+                }
+            });
+            this.setState({ products });
+        }
+    }
+
+    componentWillReceiveProps(n) {
+        console.log(this.props);
     }
 
     render() {
-        const { stackNavigation, tabNavigation } = this.props;
-        const { ready, user, products } = this.state;
+        const { stackNavigation, tabNavigation, user } = this.props;
+        const { ready, products } = this.state;
         return (
             ready ? (
                 <View style={{ flex: 1 }}>
-                    <View>
-                        <SearchBar placeholder="Cari..." containerStyle={{ backgroundColor: '#f1f2f6', borderTopWidth: 0, borderBottomWidth: 0 }} />
+                    {/* <View style={{ backgroundColor: '#ffffff', padding: 20 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>Toko Anda</Text>
                         <ProgressBarAndroid styleAttr="Horizontal" indeterminate style={{ backgroundColor: 'transparent', position: "absolute", right: 0, left: 0, bottom: -5 }} />
                     </View>
+                    <Divider /> */}
                     {user.store ? (
                         <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+                            <View>
+                                <Button title="TRANSAKSI MASUK" icon={{ name: 'receipt' }} onPress={() => stackNavigation.navigate('Transaction')} />
+                            </View>
                             <ScrollView style={{ flex: 1 }}>
                                 <View style={styles.container}>
                                     <View style={[styles.items, {
@@ -95,7 +97,7 @@ export default class StorePart extends React.Component {
                                                 <Divider style={styles.divider} />
                                                 <View style={styles.action}>
                                                     <View style={{ flex: 1 }}>
-                                                        <Button raised title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                        <Button title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
                                                     </View>
                                                 </View>
                                             </Card>
@@ -107,7 +109,7 @@ export default class StorePart extends React.Component {
                     ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
                                 <Text style={{ textAlign: 'center', marginBottom: 10 }}>Anda belum terdaftar sebagai akun warung. Mulai buat warung anda dengan tap tombol dibawah</Text>
-                                <Button raised title="BUAT WARUNG" backgroundColor="#2ecc71" icon={{ name: 'store' }} onPress={() => { stackNavigation.navigate('RegisterStore', { onDone: this._fetchAccount.bind(this) }) }} />
+                                <Button title="BUAT WARUNG" backgroundColor="#2ecc71" icon={{ name: 'store' }} onPress={() => { stackNavigation.navigate('RegisterStore', { onDone: this.props.update }) }} />
                             </View>
                         )}
                 </View>
