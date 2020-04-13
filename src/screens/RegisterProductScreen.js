@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableNativeFeedback, Image } from 'react-native';
+import { View, TouchableNativeFeedback, Image, ScrollView } from 'react-native';
 import { FormLabel, FormInput, Button, Divider } from 'react-native-elements';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
@@ -54,24 +54,25 @@ export default class RegisterProductScreen extends React.Component {
         const { name, quantity, price, photo, loading } = this.state;
         return (
             <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-                <FormLabel>Nama Produk</FormLabel>
-                <FormInput value={name} placeholder="Isi Nama Produk.." onChangeText={(text) => this.setState({ name: text })} />
-                <FormLabel>Jumlah Tersedia</FormLabel>
-                <FormInput value={quantity} placeholder="Isi Jumlah Tersedia.." onChangeText={(text) => this.setState({ quantity: text })} keyboardType="number-pad" />
-                <FormLabel>Harga Per Item</FormLabel>
-                <FormInput value={price} placeholder="Isi Harga Per Item.." onChangeText={(text) => this.setState({ price: text })} keyboardType="number-pad" />
-                <FormLabel>Foto Produk</FormLabel>
-                {photo ? (
-                    <View style={{ margin: 15 }}>
-                        <Image source={{ uri: photo }} style={{ width: 100, height: 100 }} resizeMode="cover" />
-                    </View>
-                ) : null}
-                <Button onPress={this._pickPhoto.bind(this)} color="#ff4757" backgroundColor="transparent" icon={{ name: 'photo', size: 20, color: '#ff4757' }} buttonStyle={{ marginTop: 10, borderWidth: 2, borderColor: '#ff4757' }} title="PILIH FOTO" />
+                <ScrollView>
+                    <FormLabel>Nama Produk</FormLabel>
+                    <FormInput value={name} placeholder="Isi Nama Produk.." onChangeText={(text) => this.setState({ name: text })} />
+                    <FormLabel>Jumlah Tersedia</FormLabel>
+                    <FormInput value={quantity} placeholder="Isi Jumlah Tersedia.." onChangeText={(text) => this.setState({ quantity: text })} keyboardType="number-pad" />
+                    <FormLabel>Harga Per Item</FormLabel>
+                    <FormInput value={price} placeholder="Isi Harga Per Item.." onChangeText={(text) => this.setState({ price: text })} keyboardType="number-pad" />
+                    <FormLabel>Foto Produk</FormLabel>
+                    {photo ? (
+                        <View style={{ margin: 15 }}>
+                            <Image source={{ uri: photo }} style={{ width: 100, height: 100 }} resizeMode="cover" />
+                        </View>
+                    ) : null}
+                    <Button onPress={this._pickPhoto.bind(this)} color="#ff4757" backgroundColor="transparent" icon={{ name: 'photo', size: 20, color: '#ff4757' }} buttonStyle={{ marginTop: 10, borderWidth: 2, borderColor: '#ff4757' }} title="PILIH FOTO" />
 
-                <Divider style={{ margin: 15, backgroundColor: '#bdc3c7' }} />
+                    <Divider style={{ margin: 15, backgroundColor: '#bdc3c7' }} />
 
-                <Button loading={loading} disabled={!name || !photo} onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
-
+                    <Button loading={loading} disabled={!name || !photo} onPress={this._done.bind(this)} icon={{ name: 'save', size: 20 }} backgroundColor="#2ecc71" title="SIMPAN" />
+                </ScrollView>
             </View>
         )
     }
