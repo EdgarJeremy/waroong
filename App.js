@@ -76,7 +76,7 @@ const Routes = createStackNavigator({
 		navigationOptions: ({ navigation }) => {
 			const { params = {} } = navigation.state;
 			return ({
-				title: "WAROONG",
+				title: "PASOK",
 				headerRight: (
 					<View style={{ flex: 1, flexDirection: 'row' }}>
 						<TouchableOpacity onPress={() => navigation.navigate('Checkout')}>

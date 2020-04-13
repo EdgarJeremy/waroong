@@ -18,7 +18,7 @@ export default class QuantityInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: 0
+            value: props.defaultValue ? props.defaultValue : 0
         }
     }
 
@@ -26,10 +26,10 @@ export default class QuantityInput extends React.Component {
         const { maxValue } = this.props;
         if (type === 'add') {
             if (this.state.value + 1 > maxValue) return;
-            this.setState({ value: this.state.value + 1 }, () => this.props.onChange(this.state.value));
+            this.setState({ value: this.state.value + 1 }, () => this.props.onChange && this.props.onChange(this.state.value));
         } else {
             if (this.state.value - 1 < 0) return;
-            this.setState({ value: this.state.value - 1 }, () => this.props.onChange(this.state.value));
+            this.setState({ value: this.state.value - 1 }, () => this.props.onChange && this.props.onChange(this.state.value));
         }
     }
 

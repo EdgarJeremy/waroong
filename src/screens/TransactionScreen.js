@@ -69,7 +69,7 @@ export default class TransactionScreen extends React.Component {
                         {transactions.rows.map((t, i) => (
                             <Card
                                 key={i}>
-                                <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row', marginBottom: 15 }}>
                                     <View style={{ flex: 1, justifyContent: 'center' }}>
                                         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{t.user.name}</Text>
                                     </View>
@@ -79,7 +79,6 @@ export default class TransactionScreen extends React.Component {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                <Divider style={{ marginTop: 10, marginBottom: 10 }} />
                                 <View>
                                     {
                                         t.transaction_items.map((l, k) => (

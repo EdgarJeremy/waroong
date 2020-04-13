@@ -4,6 +4,7 @@ import { Card, Divider, Button } from 'react-native-elements';
 import { Placeholder, PlaceholderMedia, PlaceholderLine, Fade } from 'rn-placeholder';
 import numeral from 'numeral';
 import ImagePicker from 'react-native-image-picker';
+import env from '../env.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default class CheckoutScreen extends React.Component {
@@ -29,7 +30,7 @@ export default class CheckoutScreen extends React.Component {
             },
             include: [{
                 model: 'Store',
-                attributes: ['id', 'name', 'photo'],
+                attributes: ['id', 'name'],
                 include: [{
                     model: 'User',
                     attributes: ['id', 'name']
@@ -39,7 +40,7 @@ export default class CheckoutScreen extends React.Component {
                 attributes: ['id', 'quantity', 'product_id'],
                 include: [{
                     model: 'Product',
-                    attributes: ['id', 'name', 'price', 'photo']
+                    attributes: ['id', 'name', 'price']
                 }]
             }]
         });
@@ -84,7 +85,7 @@ export default class CheckoutScreen extends React.Component {
                         {transactions.rows.map((t, i) => (
                             <Card
                                 key={i}
-                                image={{ uri: t.store.photo }}
+                                image={{ uri: `${env.api_host}:${env.api_port}/pics/store/${t.store.id}` }}
                                 imageProps={{ resizeMode: 'cover' }}
                                 featuredTitle={t.store.name}
                                 featuredSubtitle={t.store.user.name}>
@@ -92,7 +93,7 @@ export default class CheckoutScreen extends React.Component {
                                     {
                                         t.transaction_items.map((l, k) => (
                                             <View key={k} style={{ flexDirection: 'row', borderWidth: 1, borderColor: '#dddddd', padding: 15 }}>
-                                                <Image style={{ width: 50, height: 50 }} source={{ uri: l.product.photo }} />
+                                                <Image style={{ width: 50, height: 50 }} source={{ uri: `${env.api_host}:${env.api_port}/pics/product/${l.product.id}` }} />
                                                 <View style={{ marginLeft: 10 }}>
                                                     <Text style={{ fontWeight: 'bold' }}>Nama</Text>
                                                     <Text style={{ fontWeight: 'bold' }}>Harga</Text>

@@ -6,6 +6,7 @@ import { Card } from 'react-native-elements';
 import { Placeholder, PlaceholderMedia, PlaceholderLine, Fade } from 'rn-placeholder';
 import _ from 'lodash';
 import numeral from 'numeral';
+import env from '../env.json';
 import ParallaxPage from '../components/ParallaxPage';
 import QuantityInput from '../components/QuantityInput';
 
@@ -60,7 +61,7 @@ export default class StoreDetailScreen extends React.Component {
         const { store } = this.state;
         const { screenProps: { models } } = this.props;
         const products = await models.Product.collection({
-            attributes: ['id', 'name', 'quantity', 'price', 'photo'],
+            attributes: ['id', 'name', 'quantity', 'price'],
             where: {
                 store_id: store.id
             }
@@ -118,7 +119,7 @@ export default class StoreDetailScreen extends React.Component {
                             this.setState({ headerVisibility: false });
                     }}
                     headerStyle={styles.headerStyle}
-                    headerImage={{ uri: store.photo }}
+                    headerImage={{ uri: `${env.api_host}:${env.api_port}/pics/store/${store.id}` }}
                     foregroundContainerStyle={styles.foregroundContainerStyle}
                     onPressHeaderImage={() => alert('Header tap')}
                     renderHeader={() => (
@@ -172,7 +173,7 @@ export default class StoreDetailScreen extends React.Component {
                                             <TouchableNativeFeedback key={k}>
                                                 <Card flexDirection="row" containerStyle={styles.cardContainer}>
                                                     <View style={styles.cardImageContainer}>
-                                                        <Image style={styles.cardImage} resizeMode="cover" source={{ uri: p.photo }} />
+                                                        <Image style={styles.cardImage} resizeMode="cover" source={{ uri: `${env.api_host}:${env.api_port}/pics/product/${p.id}` }} />
                                                     </View>
                                                     <View style={[styles.cardDetailContainer, { alignItems: 'baseline' }]}>
                                                         <View style={{ flex: 1, justifyContent: 'flex-start' }}>

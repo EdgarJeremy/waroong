@@ -3,7 +3,7 @@ import { View, ScrollView, Text, ProgressBarAndroid } from 'react-native';
 import { Card, Divider, Button, SearchBar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import call from 'react-native-phone-call';
-import { Store } from '../../models';
+import env from '../../env.json';
 import Loader from '../../components/Loader';
 
 const styles = {
@@ -69,7 +69,7 @@ export default class HomePart extends React.Component {
                             <View style={styles.container}>
                                 {stores.rows.map((s, i) => (
                                     <Card key={i}
-                                        image={{ uri: s.photo }}
+                                        image={{ uri: `${env.api_host}:${env.api_port}/pics/store/${s.id}` }}
                                         imageProps={{ resizeMode: 'cover' }}
                                         featuredTitle={s.name}
                                         featuredSubtitle={(() => {

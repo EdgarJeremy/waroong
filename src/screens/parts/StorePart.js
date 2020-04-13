@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, ScrollView, ProgressBarAndroid, TouchableNativeFeedback } from 'react-native';
 import { Card, Divider, Button, SearchBar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import env from '../../env.json';
 import Loader from '../../components/Loader';
+import QuantityInput from '../../components/QuantityInput';
 
 const styles = {
     container: {
@@ -44,7 +46,7 @@ export default class StorePart extends React.Component {
         if (user.store) {
             this.setState({ ready: false });
             const products = await models.Product.collection({
-                attributes: ['id', 'name', 'quantity', 'price', 'photo'],
+                attributes: ['id', 'name', 'quantity', 'price'],
                 where: {
                     store_id: user.store.id
                 }
@@ -78,7 +80,7 @@ export default class StorePart extends React.Component {
                     {user.store ? (
                         <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
                             <View>
-                                <Button title={`TRANSAKSI MASUK${transactionCount ? ` (${transactionCount})` : ''}`} icon={{ name: 'receipt' }} onPress={() => stackNavigation.navigate('Transaction')} />
+                                <Button backgroundColor="#2d3436" textStyle={{ fontWeight: transactionCount ? 'bold' : 'normal' }} title={`TRANSAKSI MASUK${transactionCount ? ` (${transactionCount})` : ''}`} icon={{ name: 'receipt' }} onPress={() => stackNavigation.navigate('Transaction')} />
                             </View>
                             <ScrollView style={{ flex: 1 }}>
                                 <View style={styles.container}>
@@ -101,15 +103,15 @@ export default class StorePart extends React.Component {
                                             paddingRight: i % 2 != 0 ? 7.5 : 15
                                         }]} key={i}>
                                             <Card
-                                                title={item.name}
+                                                featuredTitle={item.name}
                                                 containerStyle={{ margin: 0 }}
-                                                image={{ uri: item.photo }}
+                                                image={{ uri: `${env.api_host}:${env.api_port}/pics/product/${item.id}` }}
                                                 imageProps={{ resizeMode: 'cover' }}
                                                 imageStyle={{ height: 100 }}>
-                                                <Divider style={styles.divider} />
                                                 <View style={styles.action}>
-                                                    <View style={{ flex: 1 }}>
-                                                        <Button title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} />
+                                                    <View style={{ flex: 1, alignItems: 'center' }}>
+                                                        <QuantityInput defaultValue={item.quantity} />
+                                                        {/* <Button title="ATUR" backgroundColor="#ff4757" icon={{ name: 'settings' }} containerViewStyle={{ marginLeft: 0, marginRight: 0 }} /> */}
                                                     </View>
                                                 </View>
                                             </Card>
