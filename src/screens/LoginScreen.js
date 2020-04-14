@@ -175,7 +175,7 @@ export default class LoginScreen extends React.Component {
                                             <FormLabel>Password</FormLabel>
                                             <FormInput value={loginData.password} onChangeText={(value) => this._dataChange('loginData', 'password', value)} secureTextEntry={true} placeholder="Password anda" />
                                             <Divider style={styles.divider} />
-                                            <Button raised disabled={loading} loading={loading} onPress={this._onLogin.bind(this)} title={!loading ? 'MASUK' : ''} backgroundColor="#ff4757" large />
+                                            <Button disabled={loading} loading={loading} onPress={this._onLogin.bind(this)} title={!loading ? 'MASUK' : ''} backgroundColor="#ff4757" large />
                                         </View>
                                     ) :
                                     (
@@ -191,7 +191,7 @@ export default class LoginScreen extends React.Component {
                                                     <FormLabel>Password</FormLabel>
                                                     <FormInput value={registerData.password} secureTextEntry={true} onChangeText={(value) => this._dataChange('registerData', 'password', value)} placeholder="Password anda" textContentType="password" />
                                                     <Divider style={styles.divider} />
-                                                    <Button raised disabled={loading} loading={loading} title={!loading ? 'DAFTAR' : ''} backgroundColor="#3498db" onPress={this._onRegister.bind(this)} large />
+                                                    <Button disabled={loading} loading={loading} title={!loading ? 'DAFTAR' : ''} backgroundColor="#3498db" onPress={this._onRegister.bind(this)} large />
                                                 </View>
                                             ) :
                                             (
@@ -201,7 +201,7 @@ export default class LoginScreen extends React.Component {
                                                     <FormLabel>Kode Verifikasi</FormLabel>
                                                     <FormInput value={verifyData.name} onChangeText={(value) => this._dataChange('verifyData', 'code', value)} placeholder="Kode verifikasi (lihat inbox email)" keyboardType="number-pad" maxLength={6} />
                                                     <Divider style={styles.divider} />
-                                                    <Button raised disabled={loading} loading={loading} title={!loading ? 'VERIFIKASI' : ''} backgroundColor="#2ecc71" onPress={this._onVerify.bind(this)} large />
+                                                    <Button disabled={loading} loading={loading} title={!loading ? 'VERIFIKASI' : ''} backgroundColor="#2ecc71" onPress={this._onVerify.bind(this)} large />
                                                 </View>
                                             )
                                     )
