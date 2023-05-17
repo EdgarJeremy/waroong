@@ -47,7 +47,7 @@ const Routes = createMaterialTopTabNavigator({
         },
         navigationOptions: {
             tabBarIcon: ({ tintColor }) => <Icon name="home" size={25} color={tintColor} />,
-            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>EXPLORASI</Text>
+            tabBarLabel: ({ tintColor }) => <Text style={[styles.labelStyle, { color: tintColor }]}>BELANJA</Text>
         }
     },
     Store: {

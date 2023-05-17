@@ -44,5 +44,9 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "engines": {
+    "npm": ">=6.14.12",
+    "node": ">=10.24.1"
   }
 }
